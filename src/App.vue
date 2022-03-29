@@ -56,6 +56,28 @@
 </script>
 <style lang="less">
 @import "../node_modules/uikit/src/less/uikit.less";
+
+nav{
+  -webkit-app-region: drag;
+}
+nav li a {
+  -webkit-app-region: no-drag;
+}
+.uk-navbar-nav{
+  padding-top: 20px;
+}
+.uk-navbar-nav > li > a, .uk-navbar-item, .uk-navbar-toggle {
+  min-height: 40px;
+}
+.uk-navbar-container:not(.uk-navbar-transparent) {
+  background: #131b25;
+}
+.uk-navbar-nav > li > a {
+  color: #8a8a8ac9;
+}
+.uk-navbar-nav > li.uk-active > a {
+  color: #d4d4d4;
+}
 </style>
 
 

@@ -10,6 +10,11 @@ npm install
 npm run serve
 ```
 
+### Develop inside Electron App Container
+```
+npm run electron:serve
+```
+
 ### Compiles and minifies for production
 ```
 npm run build
