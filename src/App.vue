@@ -42,6 +42,9 @@
       <li><a href="#">Item</a></li>
     </ul></div>
   </nav>
+  <div>
+    <button @click="readFile('/Users/marcorensch/Development/node/vue-projects/vue3-uikit/src/main.js')">Read File</button>
+  </div>
   <router-view/>
 </template>
 
@@ -52,12 +55,21 @@
 
   export default {
     name: 'App',
+
+    mounted() {
+      // handle reply from the backend
+      window.ipc.on('READ_FILE', (payload) =>{
+        console.log(payload.content)
+      })
+    },
     methods:{
-      clickedMenuItem(e){
-        console.log(e.target())
-        console.log('clicked')
+      readFile(path){
+        //ask backend to read file
+        const payload = { path };
+        console.log(payload)
+        window.ipc.send('READ_FILE', payload)
       }
-    }
+    },
   };
 </script>
 <style lang="less">

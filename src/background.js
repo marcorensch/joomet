@@ -1,8 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, contextBridge, ipcMain } from 'electron'
+import fs from 'fs'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+const path = require('path')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -20,11 +22,12 @@ async function createWindow() {
     minWidth: 800,
     minHeight:500,
     webPreferences: {
-      
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: false, //process.env.ELECTRON_NODE_INTEGRATION,
+      contextIsolation: true, //!process.env.ELECTRON_NODE_INTEGRATION,
+      enableRemoteModule: false,
+      preload: path.resolve(__dirname, 'preload.js')
     }
   })
 
@@ -83,3 +86,8 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.on('READ_FILE', (event, payload) =>{
+  const content = fs.readFileSync(payload.path)
+  event.reply('READ_FILE', { content })
+})
