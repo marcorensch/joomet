@@ -4,13 +4,19 @@
     <div class="uk-navbar-left"><ul class="uk-navbar-nav">
       <router-link to="/" custom v-slot="{ href, navigate, isActive, isExactActive }">
         <li :class="{ 'uk-active': isActive, 'uk-active': isExactActive }">
-          <a :href="href" @click="navigate">Home</a>
+          <a :href="href" @click="navigate">Dashboard</a>
         </li>
       </router-link>
 
-      <router-link to="/about" custom v-slot="{ href, navigate, isActive, isExactActive }">
+      <router-link to="/companies" custom v-slot="{ href, navigate, isActive, isExactActive }">
         <li :class="{ 'uk-active': isActive, 'uk-active': isExactActive }">
-          <a :href="href" @click="navigate">About</a>
+          <a :href="href" @click="navigate"><font-awesome-icon icon="building" /> Companies</a>
+        </li>
+      </router-link>
+
+      <router-link to="/tasks" custom v-slot="{ href, navigate, isActive, isExactActive }">
+        <li :class="{ 'uk-active': isActive, 'uk-active': isExactActive }">
+          <a :href="href" @click="navigate"><font-awesome-icon icon="bars-progress" /> Tasks Management</a>
         </li>
       </router-link>
 
