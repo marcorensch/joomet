@@ -1,10 +1,11 @@
 <template>
 <!-- https://www.webmound.com/custom-active-class-to-router-link-in-vue-3/ -->
-  <nav class="uk-navbar-container" uk-navbar>
+  <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
+    <nav class="uk-navbar-container" uk-navbar>
     <div class="uk-navbar-left"><ul class="uk-navbar-nav">
       <router-link to="/" custom v-slot="{ href, navigate, isActive, isExactActive }">
         <li :class="{ 'uk-active': isActive, 'uk-active': isExactActive }">
-          <a :href="href" @click="navigate">Dashboard</a>
+          <a :href="href" @click="navigate"><font-awesome-icon icon="grip" /> Dashboard</a>
         </li>
       </router-link>
 
@@ -43,6 +44,7 @@
     </ul>
     </div>
   </nav>
+  </div>
   <div class="uk-margin uk-margin-bottom">
     <div class="uk-button uk-button-secondary">Button 1</div>
   </div>
