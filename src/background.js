@@ -87,7 +87,7 @@ if (isDevelopment) {
   }
 }
 
-ipcMain.on('READ_FILE', (event, payload) =>{
-  const content = fs.readFileSync(payload.path)
+ipcMain.on('READ_TABLE', (event, payload) =>{
+  console.log(payload)
   event.reply('READ_FILE', { content })
 })
