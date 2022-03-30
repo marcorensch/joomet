@@ -46,7 +46,8 @@
   </nav>
   </div>
   <div class="uk-margin uk-margin-bottom">
-    <div class="uk-button uk-button-secondary">Button 1</div>
+    <div class="uk-button uk-button-secondary" @click="triggerPing">Button 1</div>
+    <div v-bind="response"></div>
   </div>
   <router-view/>
 </template>
@@ -58,9 +59,24 @@
 
   export default {
     name: 'App',
+    data() {
+      return { response: ''}
+    },
+    mounted() {
+      window.ipcRenderer.receive('test-backend-init', (payload) =>{
+        console.log(payload)})
+      window.ipcRenderer.send('test', {foo:'bar'})
 
-    mounted() { },
-    methods:{ },
+      window.ipcRenderer.receive('pingpong', (payload) =>{
+        console.log(payload)})
+
+    },
+    methods:{
+      triggerPing(){
+        console.log('clicked')
+        window.ipcRenderer.send('pingpong', 'ping')
+      }
+    },
   };
 </script>
 
