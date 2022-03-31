@@ -5,6 +5,11 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const path = require('path')
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const sqlite3 = require('sqlite3')
+const database = new sqlite3.Database('./public/db/database.sqlite3', (err) =>{
+  if(err) console.error('Database opening error', err)
+})
+
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -40,7 +45,8 @@ async function createWindow() {
     win.loadURL('app://./index.html')
   }
 
-  win.webContents.send('test-backend-init',"sent from backend")
+  win.webContents.send('test-backend-init',"sent from backend");
+
   // win.webContents.send('test', {'Hello There': 'General Kenobi'});
 }
 
@@ -110,7 +116,11 @@ ipcMain.on('pingpong',(event, data) =>{
   event.sender.send('pingpong','pong')
 })
 
-ipcMain.on('READ_TABLE', (event, payload) =>{
-  console.log(payload)
-  event.reply('READ_FILE', { content })
+ipcMain.handle('read-table', async (event, arg) =>{
+  console.log("clicked received in backend");
+  let response = "BAR"
+  let prom = new Promise( (resolve) => setTimeout(function(){return resolve(response)}, 2000), (reject) => reject() );
+  let result = await prom;
+  console.log ('invokeMain response to Renderer:', prom);
+  return result;
 })

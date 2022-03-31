@@ -63,18 +63,17 @@
       return { response: ''}
     },
     mounted() {
-      window.ipcRenderer.receive('test-backend-init', (payload) =>{
-        console.log(payload)})
-      window.ipcRenderer.send('test', {foo:'bar'})
+      window.ipcRenderer.receive('test-backend-init', (payload) =>{console.log(payload)})
+      // window.ipcRenderer.send('test', {foo:'bar'})
 
-      window.ipcRenderer.receive('pingpong', (payload) =>{
-        console.log(payload)})
-
+      window.ipcRenderer.receive('READ_TABLES', (payload) =>{console.log(payload)})
     },
     methods:{
-      triggerPing(){
+      async triggerPing(){
         console.log('clicked')
-        window.ipcRenderer.send('pingpong', 'ping')
+        window.ipcRenderer.invoke('read-table', 'SELECT * FROM Company').then((result) => {
+          console.log(result)
+        })
       }
     },
   };

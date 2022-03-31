@@ -1,25 +1,43 @@
 import { contextBridge, ipcRenderer } from 'electron'
+
+// White-listed channels.
+const ipc = {
+    'render': {
+        // From render to main.
+        'send': [],
+        // From main to render.
+        'receive': [],
+        // From render to main and back again.
+        'sendReceive': ['read-table']
+    }
+};
+
 const exposedAPI = {
-    send: (channel, data) => {
-        let validChannels = ['test','pingpong'] // <-- Array of all ipcRenderer Channels used in the client
+    // From render to main.
+    send: (channel, args) => {
+        let validChannels = ipc.render.send;
         if (validChannels.includes(channel)) {
-            ipcRenderer.send(channel, data)
+            ipcRenderer.send(channel, args);
         }
     },
-    on: (channel,func) =>{
-        let validChannels = ['test','test-backend-init'] // <-- Array of all ipcMain Channels used in the electron
+    // From main to render.
+    receive: (channel, listener) => {
+        let validChannels = ipc.render.receive;
         if (validChannels.includes(channel)) {
-            ipcRenderer.on(channel,(event, ...args)=>{func(...args)})
+
+            // Show me the prototype (use DevTools in the render thread)
+            console.log(ipcRenderer);
+
+            // Deliberately strip event as it includes `sender`.
+            ipcRenderer.on(channel, (event, ...args) => listener(...args));
         }
     },
-    receive: (channel, func) => {
-        console.log("receive")
-        let validChannels = ['test','test-backend-init','pingpong'] // <-- Array of all ipcMain Channels used in the electron
+    // From render to main and back again.
+    invoke: (channel, args) => {
+        let validChannels = ipc.render.sendReceive;
         if (validChannels.includes(channel)) {
-            // Deliberately strip event as it includes `sender`
-            ipcRenderer.on(channel, (event, ...args) => {
-                func(...args)
-            })
+            console.log(`Invoked via ${channel}`)
+            return ipcRenderer.invoke(channel, args);
         }
     }
 }
