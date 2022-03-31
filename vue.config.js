@@ -4,6 +4,7 @@ module.exports = defineConfig({
   pluginOptions: {
     electronBuilder: {
       preload: 'src/preload.js',
+      mainProcessFile: "src/background.js",
       // Or, for multiple preload files:
       // preload: { preload: 'src/preload.js', otherPreload: 'src/preload2.js' }
     }
