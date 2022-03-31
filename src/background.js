@@ -44,24 +44,6 @@ async function createWindow() {
   // win.webContents.send('test', {'Hello There': 'General Kenobi'});
 }
 
-//ipc
-ipcMain.on('test', (event, data) => {
-  console.log("backend test called")
-  // and return:
-  event.sender.send('test','return direct')
-  // const webContents = event.sender
-  // const win = BrowserWindow.fromWebContents(webContents)
-  //
-  // win.webContents.send('foo', 'bar')
-  // win.webContents.send('test', {'SAVED': 'File Saved'});
-})
-
-//PingPong
-ipcMain.on('pingpong',(event, data) =>{
-  console.log(data)
-  event.sender.send('pingpong','pong')
-})
-
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -107,6 +89,26 @@ if (isDevelopment) {
     })
   }
 }
+
+/* IPC */
+
+//ipc
+ipcMain.on('test', (event, data) => {
+  console.log("backend test called")
+  // and return:
+  event.sender.send('test','return direct')
+  // const webContents = event.sender
+  // const win = BrowserWindow.fromWebContents(webContents)
+  //
+  // win.webContents.send('foo', 'bar')
+  // win.webContents.send('test', {'SAVED': 'File Saved'});
+})
+
+//PingPong
+ipcMain.on('pingpong',(event, data) =>{
+  console.log(data)
+  event.sender.send('pingpong','pong')
+})
 
 ipcMain.on('READ_TABLE', (event, payload) =>{
   console.log(payload)
