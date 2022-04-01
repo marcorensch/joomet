@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 
@@ -31,7 +31,7 @@ async function createWindow() {
   const win = new BrowserWindow({
     titleBarStyle: 'hidden',
 
-    width: 800,
+    width: 1600,
     height: 600,
     minWidth: 800,
     minHeight:500,
@@ -57,6 +57,13 @@ async function createWindow() {
   }
 
   win.webContents.send('test-backend-init',"sent from backend");
+
+  // opens all "_blank" targets in default browser!
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
 
   // win.webContents.send('test', {'Hello There': 'General Kenobi'});
 }

@@ -1,5 +1,17 @@
 <template>
   <div class="companies">
-    <h1>This is an Companies page</h1>
+    <CompanyList />
   </div>
 </template>
+
+<script>
+// @ is an alias to /src
+import CompanyList from '@/components/CompanyList.vue'
+
+export default {
+  name: 'Companies',
+  components: {
+    CompanyList
+  }
+}
+</script>

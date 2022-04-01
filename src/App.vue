@@ -45,11 +45,12 @@
     </div>
   </nav>
   </div>
-  <div class="uk-margin uk-margin-bottom">
-    <div class="uk-button uk-button-secondary" @click="triggerPing">Button 1</div>
-    <div v-bind="response"></div>
+  <div class="uk-section uk-section-secondary uk-section-small">
+    <div class="uk-container uk-container-expand">
+      <router-view/>
+    </div>
   </div>
-  <router-view/>
+
 </template>
 
 <script>
@@ -60,7 +61,7 @@
   export default {
     name: 'App',
     data() {
-      return { response: ''}
+      return {}
     },
     mounted() {
       window.ipcRenderer.receive('test-backend-init', (payload) =>{console.log(payload)})
@@ -69,12 +70,7 @@
       window.ipcRenderer.receive('READ_TABLES', (payload) =>{console.log(payload)})
     },
     methods:{
-      async triggerPing(){
-        console.log('clicked')
-        window.ipcRenderer.invoke('read-table', 'SELECT * FROM Company').then((result) => {
-          console.log(result)
-        })
-      }
+
     },
   };
 </script>
@@ -95,13 +91,21 @@ nav li a {
   min-height: 40px;
 }
 .uk-navbar-container:not(.uk-navbar-transparent) {
-  background: #131b25;
+  background: #39343d; /*#131b25;*/
+  border-bottom: 0.75px solid #000;
 }
 .uk-navbar-nav > li > a {
-  color: #8a8a8ac9;
+  color: #ababab;
 }
 .uk-navbar-nav > li.uk-active > a {
-  color: #d4d4d4;
+  color: #ebeaeb;
+}
+*{
+  transition: all ease-in-out 150ms;
+}
+a.nx-link:hover {
+  text-decoration: none;
+  color: #11bee5 !important;
 }
 </style>
 
