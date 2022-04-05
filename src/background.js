@@ -3,20 +3,8 @@
 import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-
-import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
-
-let database;
-
-open({
-  filename: './public/db/database.sqlite3',
-  driver: sqlite3.Database
-}).then((db) => {
-  database = db;
-})
-
 const path = require('path')
+const db = require('./db')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 
@@ -144,8 +132,10 @@ ipcMain.on('pingpong',(event, data) =>{
 // })
 
 ipcMain.handle('read-table',   async (event, arg) =>{
-  const sql = arg; // 'Select * from Company'
-  const response = await database.all(sql)
-  console.log("response:", response)
-  return response
+  const table = arg; // 'Select * from Company'
+  const data = async () => {
+    const proxies = await db[table].find({})
+    return {proxies}
+  }
+  return data
 })
