@@ -1,9 +1,9 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloUikit site="Home"/>
-    <GridExample />
-  </div>
+    <div class="home">
+      <img alt="Vue logo" src="../assets/logo.png">
+      <HelloUikit site="Home"/>
+      <GridExample />
+    </div>
 </template>
 
 <script>
