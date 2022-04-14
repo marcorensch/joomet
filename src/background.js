@@ -7,8 +7,6 @@ const path = require('path')
 const db = require('./db')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-
-
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -131,11 +129,16 @@ ipcMain.on('pingpong',(event, data) =>{
 //   return result;
 // })
 
-ipcMain.handle('read-table',   async (event, arg) =>{
-  const table = arg; // 'Select * from Company'
-  const data = async () => {
-    const proxies = await db[table].find({})
-    return {proxies}
-  }
-  return data
+ipcMain.handle('read-table',   async(event, arg) =>{
+  console.log(arg)
+  const table = arg; // 'Select * from Company
+  const result = await db[table].find({})
+  return result;
+})
+
+ipcMain.handle('save-category', async (event, item) =>{
+  console.log(item)
+  const result = await db.projects.insert({title: item.title, platform: item.platform})
+
+  return result
 })

@@ -50,8 +50,6 @@
   color: #2c3e50;
 }
 
-
-
 .drag{
   -webkit-user-select: none;
   -webkit-app-region: drag;
@@ -60,6 +58,39 @@
 #content{
   border-left: 2px solid rgba(21, 21, 21, 0.6);
   background-color: #221d27;
+}
+
+.uk-button {
+  border-radius: 3px;
+}
+
+.nx-button-small{
+  padding: 2px 30px;
+  line-height: 1.6em;
+}
+.nx-button-default{
+  background-color: #5a565f;
+  color: #e6e6e7;
+  border: 1px solid transparent;
+  border-top-color: #6c6770;
+  box-shadow: 0px 5px 3px rgba(0,0,0, 0);
+  text-transform: none;
+
+  &:hover{
+    color: #f3f3f3;
+    background-color: #605c65;
+    border-top-color: #78727c;
+  }
+}
+.uk-button.nx-button-danger {
+  background-color: #2d0000;
+  color: white;
+  border: 1px solid #380000;
+}
+.uk-button.nx-button-success {
+  background-color: green;
+  color: white;
+  border: 1px solid green;
 }
 
 </style>

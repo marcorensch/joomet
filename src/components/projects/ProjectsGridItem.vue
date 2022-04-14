@@ -8,9 +8,12 @@
               <span uk-icon="icon: database; ratio: 4"></span>
             </div>
             <div class="uk-text-center uk-margin-small-top">
-              <span>Projekt Titel</span>
+              <span>{{title}}</span>
             </div>
           </div>
+        </div>
+        <div class="uk-position-top-right uk-padding-small">
+          <span class="uk-label">{{getPlatformLabel(platform)}}</span>
         </div>
       </div>
     </div>
@@ -18,8 +21,16 @@
 </template>
 
 <script>
+import * as types from '@/assets/projectTypes.js';
+
 export default {
-  name: "ProjectsListItem"
+  name: "ProjectsListItem",
+  props: ['id','title','platform'],
+  methods: {
+    getPlatformLabel(key){
+      return types.projectTypes[key].label
+    }
+  }
 }
 </script>
 
