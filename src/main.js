@@ -10,11 +10,11 @@ import {
     faBarsProgress,
     faGrip,
     faRotate,
-    faPlusCircle
+    faPlusCircle, faFolder, faFolderTree, faFolderPlus, faChevronLeft, faChevronRight, faChevronUp, faChevronDown
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faUserSecret, faBuilding, faBarsProgress, faGrip, faRotate, faPlusCircle)
+library.add(faUserSecret, faBuilding, faBarsProgress, faGrip, faRotate, faPlusCircle, faFolder, faFolderTree, faFolderPlus, faChevronLeft, faChevronRight, faChevronUp, faChevronDown)
 
 createApp(App)
     .component('font-awesome-icon', FontAwesomeIcon)

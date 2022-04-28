@@ -51,8 +51,18 @@ export default {
   color: #484848;
 }
 
-.uk-card-hover:hover.uk-card-secondary span {
+.uk-card-hover:hover.uk-card span {
   color: #8a8a8a;
+}
+
+.uk-card-hover:hover.uk-card .icon{
+  opacity: 1;
+}
+
+
+.icon{
+  font-size: 6vw;
+  opacity: .5;
 }
 
 </style>

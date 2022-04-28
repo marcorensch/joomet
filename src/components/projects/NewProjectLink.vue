@@ -4,15 +4,15 @@
       <div class="uk-card-body uk-position-relative">
         <div class="uk-flex uk-flex-middle uk-flex-center">
           <div>
-            <div class="uk-text-center">
-              <span uk-icon="icon: plus-circle; ratio: 4"></span>
+            <div class="uk-text-center icon">
+              <font-awesome-icon icon="folder-plus" />
             </div>
             <div class="uk-text-center uk-margin-small-top">
               <span>Projekt erstellen</span>
             </div>
           </div>
         </div>
-        <router-link :to="{name: 'New Project'}" class="uk-position-cover"></router-link>
+        <router-link :to="{name: 'Projects.New'}" class="uk-position-cover"></router-link>
       </div>
     </div>
 
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: "NewProjectSection"
+  name: "NewProjectLink"
 }
 </script>
 

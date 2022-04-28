@@ -4,8 +4,8 @@
       <div class="uk-card-body">
         <div class="uk-flex uk-flex-middle uk-flex-center">
           <div>
-            <div class="uk-text-center">
-              <span uk-icon="icon: database; ratio: 4"></span>
+            <div class="uk-text-center icon">
+              <font-awesome-icon icon="folder" />
             </div>
             <div class="uk-text-center uk-margin-small-top">
               <span>{{title}}</span>
@@ -16,6 +16,7 @@
           <span class="uk-label">{{getPlatformLabel(platform)}}</span>
         </div>
       </div>
+      <router-link :to="{name: 'Projects.Detail', params:{id:id}}" class="uk-position-cover"></router-link>
     </div>
   </div>
 </template>

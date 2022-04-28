@@ -93,4 +93,14 @@
   border: 1px solid green;
 }
 
+.medium-icon{
+  font-size: 1.4em;
+}
+.icon-hover{
+  opacity: 0.5;
+}
+.icon-hover:hover{
+  opacity: 1;
+}
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="uk-margin">
   <form  class="uk-form-horizontal" @submit.prevent="save">
     <div class="uk-margin-small" uk-grid>
       <div class="uk-text-left uk-flex uk-flex-middle uk-width-1-3">
@@ -28,7 +28,7 @@
     <div class="uk-margin">
       <div class="uk-flex uk-flex-right">
         <div>
-          <router-link :to="{name: 'Projects'}"  class="uk-button nx-button-default nx-button-small">Abbrechen</router-link>
+          <router-link :to="{name: 'Projects.Overview'}"  class="uk-button nx-button-default nx-button-small">Abbrechen</router-link>
         </div>
         <div class="uk-margin-small-left">
           <button type="reset" class="uk-button nx-button-default nx-button-small">Reset</button>
@@ -61,7 +61,7 @@ export default {
       window.ipcRenderer.invoke('save-category', formData).then((result) => {
         console.log(result)
         // with hash, resulting in /about#team
-        router.push({ path: '/projects'})
+        router.push({ name: 'Projects.Overview'})
       })
     }
   }

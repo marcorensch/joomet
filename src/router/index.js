@@ -1,35 +1,36 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Dashboard from "@/views/Dashboard";
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'Dashboard',
+    component: Dashboard
   },
   {
     path: '/projects',
-    name: 'Projects',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/projects/ProjectsOverview.vue')
+    name: 'Projects.Overview',
+    component: () => import('@/views/projects/ProjectsOverview.vue'),
+    children:[
+      {
+        path: 'new',
+        name: 'Projects.New',
+        component: () => import('@/views/projects/ProjectNew.vue')
+      }
+    ]
   },
   {
-    path: '/projects/new',
-    name: 'New Project',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/projects/NewProjectView.vue')
+    path: '/projects/:id',
+    name: 'Projects.Detail',
+    component: () => import('@/views/projects/ProjectDetail.vue'),
+    props: true
   },
+
+
   {
     path: '/settings',
     name: 'Settings',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/SettingsView.vue')
+    component: () => import('@/views/Settings.vue')
   },
 ]
 

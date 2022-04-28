@@ -1,15 +1,17 @@
 <template>
-
   <div>
+    <HistoryBack />
     <ProjectForm />
   </div>
 </template>
 
 <script>
 import ProjectForm from "@/components/projects/ProjectForm";
+import HistoryBack from "@/components/navigation/HistoryBack";
 export default {
-  name: "NewProjectView",
+  name: "ProjectNew",
   components: {
+    HistoryBack,
     ProjectForm
   },
 }

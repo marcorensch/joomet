@@ -15,3 +15,9 @@ export default {
   }
 }
 </script>
+
+<style>
+*{
+  transition:opacity 200ms ease-in-out;
+}
+</style>

@@ -5,14 +5,14 @@
       <ul id="nav" class="uk-nav-default uk-nav-parent-icon" uk-nav>
 
         <router-link to="/" custom v-slot="{ href, navigate, isActive, isExactActive }">
-          <li :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
+          <li id="dashboard-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
             <a :href="href" @click="navigate"><font-awesome-icon icon="grip" /><span>Dashboard</span></a>
           </li>
         </router-link>
 
-        <router-link :to="{name: 'Projects'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
-          <li :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="building" /><span>Projects</span></a>
+        <router-link to="/projects" custom v-slot="{ href, navigate, isActive, isExactActive }">
+          <li id="projects-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
+            <a :href="href" @click="navigate"><font-awesome-icon icon="folder-tree" /><span>Projects</span></a>
           </li>
         </router-link>
 
