@@ -42,6 +42,9 @@
 </style>
 
 <style lang="less">
+*{
+  user-select: none;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -101,6 +104,16 @@
 }
 .icon-hover:hover{
   opacity: 1;
+}
+
+h1.view-title{
+  text-align:left;
+  color: #999999;
+  border-bottom: 1px solid #999999;
+  margin-bottom: 60px;
+  padding-left: 30px;
+  padding-bottom: 10px;
+  line-height: .8em;
 }
 
 </style>

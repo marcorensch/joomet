@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HistoryBack />
+
     <ProjectForm />
   </div>
 </template>
@@ -14,6 +14,12 @@ export default {
     HistoryBack,
     ProjectForm
   },
+  mounted() {
+
+  },
+  unmounted() {
+
+  }
 }
 </script>
 

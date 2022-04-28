@@ -18,7 +18,7 @@ export default {
     }
   },
   mounted() {
-
+    document.getElementById('projects-link').classList.add('uk-active','active')
   }
 }
 </script>

@@ -12,11 +12,6 @@ const routes = [
     name: 'Projects.Overview',
     component: () => import('@/views/projects/ProjectsOverview.vue'),
     children:[
-      {
-        path: 'new',
-        name: 'Projects.New',
-        component: () => import('@/views/projects/ProjectNew.vue')
-      }
     ]
   },
   {
@@ -26,6 +21,11 @@ const routes = [
     props: true
   },
 
+  {
+    path: '/projects/new',
+    name: 'Projects.New',
+    component: () => import('@/views/projects/ProjectNew.vue'),
+  },
 
   {
     path: '/settings',

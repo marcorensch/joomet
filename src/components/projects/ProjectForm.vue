@@ -1,15 +1,16 @@
 <template>
-<div class="uk-margin">
+<div class="">
+  <h1 class="view-title">Create new Project</h1>
   <form  class="uk-form-horizontal" @submit.prevent="save">
     <div class="uk-margin-small" uk-grid>
       <div class="uk-text-left uk-flex uk-flex-middle uk-width-1-3">
-        <label for="title" class="">Projekt Titel</label>
+        <label for="title" class="">Title</label>
       </div>
       <div class="uk-width-2-3">
         <input name="title" id="title" type="text" class="uk-input" required>
       </div>
       <div class="uk-text-left uk-flex uk-flex-middle uk-width-1-3">
-        <label for="platform">Projekt Plattform</label>
+        <label for="platform">Platform</label>
       </div>
       <div class="uk-width-2-3" uk-form-custom="target: > * > span:first-child">
         <select name="platform" id="platform" required>
@@ -28,13 +29,13 @@
     <div class="uk-margin">
       <div class="uk-flex uk-flex-right">
         <div>
-          <router-link :to="{name: 'Projects.Overview'}"  class="uk-button nx-button-default nx-button-small">Abbrechen</router-link>
-        </div>
-        <div class="uk-margin-small-left">
           <button type="reset" class="uk-button nx-button-default nx-button-small">Reset</button>
+         </div>
+        <div class="uk-margin-small-left">
+          <router-link :to="{name: 'Projects.Overview'}"  class="uk-button nx-button-default nx-button-small">Cancel</router-link>
         </div>
         <div class="uk-margin-small-left">
-          <button type="submit" class="uk-button nx-button-default nx-button-small">Speichern</button>
+          <button type="submit" class="uk-button nx-button-default nx-button-small">Save</button>
         </div>
       </div>
     </div>

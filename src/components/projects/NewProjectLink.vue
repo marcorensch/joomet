@@ -8,7 +8,7 @@
               <font-awesome-icon icon="folder-plus" />
             </div>
             <div class="uk-text-center uk-margin-small-top">
-              <span>Projekt erstellen</span>
+              <span>New Project</span>
             </div>
           </div>
         </div>

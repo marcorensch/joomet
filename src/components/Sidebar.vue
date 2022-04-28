@@ -11,7 +11,7 @@
         </router-link>
 
         <router-link to="/projects" custom v-slot="{ href, navigate, isActive, isExactActive }">
-          <li id="projects-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
+          <li id="projects-link" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/projects') }">
             <a :href="href" @click="navigate"><font-awesome-icon icon="folder-tree" /><span>Projects</span></a>
           </li>
         </router-link>
@@ -28,7 +28,15 @@
 
 <script>
 export default {
-  name: "Sidebar"
+  name: "Sidebar",
+  methods: {
+    subIsActive(input) {
+      const paths = Array.isArray(input) ? input : [input]
+      return paths.some(path => {
+        return this.$route.path.indexOf(path) === 0 // current path starts with this path string
+      })
+    }
+  }
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="uk-width-1-1 uk-text-left">
+  <div class="uk-position-top-left uk-padding">
     <a class="medium-icon icon-hover" @click="$router.go(-1)"><font-awesome-icon icon="chevron-left" /></a>
   </div>
 </template>
