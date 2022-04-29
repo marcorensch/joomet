@@ -1,6 +1,9 @@
 <template>
-  <HistoryBack />
-  <div class="uk-margin">{{id}}</div>
+  <div class="uk-padding ">
+    <HistoryBack />
+    <div class="uk-margin">{{id}}</div>
+  </div>
+
 </template>
 
 <script>

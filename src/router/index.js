@@ -32,6 +32,11 @@ const routes = [
     name: 'Settings',
     component: () => import('@/views/Settings.vue')
   },
+  {
+    path:'/fileanalyser',
+    name:'FileAnalyser',
+    component: () => import('@/views/Fileanalyser.vue')
+  }
 ]
 
 const router = createRouter({

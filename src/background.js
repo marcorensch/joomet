@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const path = require('path')
 const db = require('./db')
+const fsPromisified = require('fs/promises');
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -129,16 +130,17 @@ ipcMain.on('pingpong',(event, data) =>{
 //   return result;
 // })
 
-ipcMain.handle('read-table',   async(event, arg) =>{
-  console.log(arg)
-  const table = arg; // 'Select * from Company
-  const result = await db[table].find({})
-  return result;
+ipcMain.handle('read-table',   async(event, table) =>{
+  // 'Select * from Projects
+  return await db[table].find({});
 })
 
 ipcMain.handle('save-category', async (event, item) =>{
   console.log(item)
-  const result = await db.projects.insert({title: item.title, platform: item.platform})
+  return await db.projects.insert({title: item.title, platform: item.platform})
+})
 
-  return result
+ipcMain.handle('READ_FILE', async (event,filePath) =>{
+  console.log(filePath)
+  return await fsPromisified.readFile(filePath, "utf-8");
 })

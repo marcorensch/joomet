@@ -6,9 +6,9 @@ const ipc = {
         // From render to main.
         'send': [],
         // From main to render.
-        'receive': [],
+        'receive': ['FILE_FETCHED'],
         // From render to main and back again.
-        'sendReceive': ['read-table','save-category']
+        'sendReceive': ['read-table','save-category', 'READ_FILE']
     }
 };
 

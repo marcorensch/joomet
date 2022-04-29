@@ -1,12 +1,10 @@
 <template>
-  <div id="app" class="uk-grid uk-grid-collapse uk-height-viewport uk-position-relative">
+  <div id="app" class="uk-grid uk-grid-collapse uk-position-relative" uk-height-viewport>
     <Sidebar />
 
-    <div class="uk-width-expand uk-position-relative">
+    <div class="uk-width-expand uk-position-relative" style="background:red">
       <div id="content" class=" uk-light uk-position-cover">
-        <div class="uk-padding uk-height-1-1 uk-overflow-auto">
-          <router-view/>
-        </div>
+        <router-view/>
       </div>
     </div>
   </div>
@@ -76,7 +74,7 @@
   color: #e6e6e7;
   border: 1px solid transparent;
   border-top-color: #6c6770;
-  box-shadow: 0px 5px 3px rgba(0,0,0, 0);
+  box-shadow: 0 5px 3px rgba(0,0,0, 0);
   text-transform: none;
 
   &:hover{
@@ -108,8 +106,8 @@
 
 h1.view-title{
   text-align:left;
-  color: #999999;
-  border-bottom: 1px solid #999999;
+  color: #ddddde;
+  border-bottom: 1px solid #35303a;
   margin-bottom: 60px;
   padding-left: 30px;
   padding-bottom: 10px;

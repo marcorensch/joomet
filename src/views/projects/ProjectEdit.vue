@@ -1,5 +1,7 @@
 <template>
+  <div class="uk-padding">
 
+  </div>
 </template>
 
 <script>

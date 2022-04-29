@@ -15,6 +15,16 @@
             <a :href="href" @click="navigate"><font-awesome-icon icon="folder-tree" /><span>Projects</span></a>
           </li>
         </router-link>
+        <div>
+          <hr class="nx-hr uk-margin-top">
+        </div>
+
+
+        <router-link :to="{name: 'FileAnalyser'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
+          <li id="file-analyser" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/fileanalyser') }">
+            <a :href="href" @click="navigate"><font-awesome-icon icon="file-circle-check" /><span>FileAnalyser</span></a>
+          </li>
+        </router-link>
 
       </ul>
     </div>
@@ -44,7 +54,7 @@ export default {
 
 #sidebar{
   background-color: #252328;
-  min-width: 250px;
+  min-width: 220px;
   padding-right: 0;
   padding-left: 0;
   border-right: 1px solid rgba(148, 148, 148, 0.1);
@@ -52,11 +62,11 @@ export default {
 
 #nav {
 a {
-  color: #646464;
+  color: #eeeeee;
   font-size: 1.1em;
 
 &:hover{
-   color: #919191;
+   color: #f8f8f8;
  }
 }
   a span {
@@ -74,7 +84,18 @@ a {
 }
 
 .active a {
-  color: #ececec !important;
+  color: #f6f6f6 !important;
+}
+
+ul#nav li svg {
+  color: #0097fe;
+}
+
+hr.nx-hr {
+  border-top: 1px solid #19181b !important;
+  border-bottom: 1px solid #2d2a30 !important;
+  width: calc(100% + 40px);
+  margin-left:-20px;
 }
 
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="projects-container uk-grid-small uk-child-width-1-1 uk-child-widt-1-@s uk-child-width-1-3@m" uk-grid uk-height-match="target: > div > .uk-card">
-    <NewProjectLink />
+  <div class="uk-position-relative uk-padding uk-grid-small uk-child-width-1-1 uk-child-width-1-3@m" uk-grid uk-height-match="target: > div > .uk-card">
+
     <ProjectsGridItem
         v-for="project of projects"
         :key="project.id"
@@ -8,17 +8,17 @@
         :platform="project.platform"
         :id="project._id"
     />
+
   </div>
 </template>
 
 <script>
-import NewProjectLink from "@/components/projects/NewProjectLink";
 import ProjectsGridItem from "@/components/projects/ProjectsGridItem";
 
 export default {
   name: "ProjectsGrid",
   components:{
-    NewProjectLink, ProjectsGridItem
+    ProjectsGridItem
   },
   data() {
     return { projects: false}
@@ -26,7 +26,6 @@ export default {
   mounted() {
     console.log(this.projects)
     if(!this.projects){
-      console.log("response scheint false")
       this.triggerUpdate()
     }
   },
