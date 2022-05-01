@@ -1,6 +1,5 @@
 <template>
-<div class="">
-  <h1 class="view-title">Create new Project</h1>
+<div class="uk-padding">
   <form  class="uk-form-horizontal" @submit.prevent="save">
     <div class="uk-margin-small" uk-grid>
       <div class="uk-text-left uk-flex uk-flex-middle uk-width-1-3">

@@ -8,15 +8,15 @@
               <font-awesome-icon icon="folder" />
             </div>
             <div class="uk-text-center uk-margin-small-top">
-              <span>{{title}}</span>
+              <span>{{project.title}}</span>
             </div>
           </div>
         </div>
         <div class="uk-position-top-right uk-padding-small">
-          <span class="uk-label">{{getPlatformLabel(platform)}}</span>
+          <span class="uk-label">{{getPlatformLabel(project.platform)}}</span>
         </div>
       </div>
-      <router-link :to="{name: 'Projects.Detail', params:{id:id}}" class="uk-position-cover"></router-link>
+      <router-link :to="{name: 'Projects.Detail', params:{id:project._id}}" class="uk-position-cover"></router-link>
     </div>
   </div>
 </template>
@@ -26,7 +26,12 @@ import * as types from '@/assets/projectTypes.js';
 
 export default {
   name: "ProjectsListItem",
-  props: ['id','title','platform'],
+  props:{
+    project:{
+      type: Object,
+      default: () =>({}),
+    },
+  },
   methods: {
     getPlatformLabel(key){
       return types.projectTypes[key].label

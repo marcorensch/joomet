@@ -3,10 +3,13 @@
 import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import {indexOf} from "core-js/internals/array-includes";
 const path = require('path')
 const db = require('./db')
 const fsPromisified = require('fs/promises');
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+const allowedFileTypesForCheck = ['.ini','.txt']
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -84,6 +87,7 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+  // Send App Version information to frontend:
 })
 
 // Exit cleanly on request from parent process in development mode.
@@ -130,9 +134,24 @@ ipcMain.on('pingpong',(event, data) =>{
 //   return result;
 // })
 
-ipcMain.handle('read-table',   async(event, table) =>{
+ipcMain.handle("LOADED", (event) => {
+  let data = {
+    appVersion: app.getVersion(),
+  };
+  return data;
+})
+
+ipcMain.handle('GET_ITEMS',   async(event, args) =>{
+  let payload = JSON.parse(args)
+  let filter = {}
+
+  if(payload.filter){
+    // build the filter
+    filter = payload.filter
+  }
+
   // 'Select * from Projects
-  return await db[table].find({});
+  return await db[payload.table].find(filter);
 })
 
 ipcMain.handle('save-category', async (event, item) =>{
@@ -142,5 +161,10 @@ ipcMain.handle('save-category', async (event, item) =>{
 
 ipcMain.handle('READ_FILE', async (event,filePath) =>{
   console.log(filePath)
-  return await fsPromisified.readFile(filePath, "utf-8");
+  if(allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())){
+    return await fsPromisified.readFile(filePath, "utf-8");
+  }else{
+    return false
+  }
+
 })

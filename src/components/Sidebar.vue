@@ -33,12 +33,25 @@
         <router-link :to="{name: 'Settings'}"><span uk-icon="icon: cog; ratio: .8"></span></router-link>
       </div>
     </div>
+    <div v-if="appInfo.appVersion" class="uk-position-bottom-right">
+      <div class=" uk-padding-small nx-text-xsmall uk-text-meta">
+        v{{appInfo.appVersion}}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "Sidebar",
+  props:{
+    appInfo:{
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  mounted() {
+  },
   methods: {
     subIsActive(input) {
       const paths = Array.isArray(input) ? input : [input]

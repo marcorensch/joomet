@@ -4,39 +4,33 @@
     <ProjectsGridItem
         v-for="project of projects"
         :key="project.id"
-        :title="project.title"
-        :platform="project.platform"
-        :id="project._id"
+        :project="project"
     />
 
   </div>
 </template>
 
 <script>
-import ProjectsGridItem from "@/components/projects/ProjectsGridItem";
+import ProjectsGridItem from "@/components/projects/grid/ProjectsGridItem";
 
 export default {
   name: "ProjectsGrid",
+  props:{
+    projects:{
+      type: Object,
+      default: () =>({}),
+    },
+  },
   components:{
     ProjectsGridItem
   },
   data() {
-    return { projects: false}
-  },
-  mounted() {
-    console.log(this.projects)
-    if(!this.projects){
-      this.triggerUpdate()
+    return {
+
     }
   },
-  methods:{
-    async triggerUpdate(){
-      window.ipcRenderer.invoke('read-table', 'projects').then((result) => {
-        console.log(result)
-        this.projects = result
-      })
-    }
-  },
+
+
 }
 </script>
 

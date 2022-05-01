@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="uk-grid uk-grid-collapse uk-position-relative" uk-height-viewport>
-    <Sidebar />
+    <Sidebar :appInfo="appInfo" />
 
-    <div class="uk-width-expand uk-position-relative" style="background:red">
+    <div class="uk-width-expand uk-position-relative">
       <div id="content" class=" uk-light uk-position-cover">
         <router-view/>
       </div>
@@ -23,9 +23,17 @@
       Sidebar
     },
     data() {
-      return {}
+      return {
+        appInfo: {
+          appVersion: null
+        }
+      }
     },
     mounted() {
+      window.ipcRenderer.invoke('LOADED','').then((result) => {
+        this.appInfo = result
+        console.log(result)
+      })
     },
     methods:{
 
@@ -94,6 +102,20 @@
   border: 1px solid green;
 }
 
+.uk-button-group .uk-button:last-of-type{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.uk-button-group .uk-button:not(:last-of-type){
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.nx-button-default.nx-selected{
+  background-color: #333136;
+  border-color: rgba(0,0,0, .3);
+  box-shadow: inset 0 0 4px rgba(0,0,0, .3);
+}
+
 .medium-icon{
   font-size: 1.4em;
 }
@@ -104,14 +126,17 @@
   opacity: 1;
 }
 
-h1.view-title{
-  text-align:left;
-  color: #ddddde;
-  border-bottom: 1px solid #35303a;
-  margin-bottom: 60px;
-  padding-left: 30px;
-  padding-bottom: 10px;
-  line-height: .8em;
+#content #toolbar{
+  background-color: #242327;
+  border-bottom:2px solid #1a191c;
+}
+
+.nx-text-xsmall{
+  font-size: .6em;
+}
+
+.drag{
+  -webkit-app-region: drag;
 }
 
 </style>

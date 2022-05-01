@@ -2,9 +2,7 @@
   <div class="fileanalyser" uk-height-viewport>
     <div class="uk-position-cover uk-overflow-auto" >
 
-      <div class="uk-padding">
-        <h1 class="view-title">FileAnalyser</h1>
-      </div>
+      <ViewTitle title="FileAnalyser" />
 
 
       <div class="uk-flex uk-flex-center" :class="{'uk-flex-middle':!checkDone}" uk-height-viewport="offset-top:true">
@@ -15,7 +13,7 @@
             </div>
             <form>
               <div class="dropbox uk-flex uk-flex-middle uk-flex-center">
-                <input type="file" :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+                <input type="file" name="filename" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                        accept=".ini,.txt" class="input-file">
                 <p v-if="isInitial">
                   Drag your file here to begin<br> or click to browse
@@ -38,19 +36,20 @@
 
 <script>
 // @ is an alias to /src
-import HelloUikit from '@/components/HelloUikit.vue'
+import ViewTitle from '@/components/ViewTitle.vue'
 import GridExample from '@/components/GridExample.vue'
 
 export default {
   name: 'Fileanalyser',
   components: {
-    HelloUikit, GridExample
+    ViewTitle, GridExample
   },
   data(){
     return {
       isInitial: true,
       isChecking: false,
       checkDone: false,
+      isSaving: false,
     }
   },
   computed:{
@@ -58,6 +57,8 @@ export default {
   },
   methods: {
     async filesChange(name, files){
+      this.isSaving = true
+      console.log(files[0])
       try {
         const fileContent = await window.ipcRenderer.invoke('READ_FILE', files[0].path)
         console.log(fileContent);
