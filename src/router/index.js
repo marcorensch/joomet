@@ -8,23 +8,23 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/projects',
-    name: 'Projects.Overview',
-    component: () => import('@/views/projects/ProjectsOverview.vue'),
+    path: '/customers',
+    name: 'Customers.Overview',
+    component: () => import('@/views/customers/overview.vue'),
     children:[
     ]
   },
   {
-    path: '/projects/:id',
-    name: 'Projects.Detail',
-    component: () => import('@/views/projects/ProjectDetail.vue'),
+    path: '/customers/:id',
+    name: 'Customer.Detail',
+    component: () => import('@/views/customers/detail.vue'),
     props: true
   },
 
   {
-    path: '/projects/new',
-    name: 'Projects.New',
-    component: () => import('@/views/projects/ProjectNew.vue'),
+    path: '/customers/new',
+    name: 'Customer.New',
+    component: () => import('@/views/customers/new.vue'),
   },
 
   {
@@ -33,9 +33,9 @@ const routes = [
     component: () => import('@/views/Settings.vue')
   },
   {
-    path:'/fileanalyser',
-    name:'FileAnalyser',
-    component: () => import('@/views/Fileanalyser.vue')
+    path:'/tasks',
+    name:'Tasks.Overview',
+    component: () => import('@/views/tasks/overview.vue')
   }
 ]
 

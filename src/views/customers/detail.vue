@@ -44,7 +44,7 @@ export default {
   },
   mounted() {
     // Styling Sidebar
-    document.getElementById('projects-link').classList.add('uk-active','active')
+    document.getElementById('customers-link').classList.add('uk-active','active')
 
     this.getProject()
 
