@@ -1,12 +1,12 @@
 <template>
   <div>
-    <ViewTitle title="Create new Project" />
-    <ProjectForm />
+    <ViewTitle title="Add Customer" />
+    <CustomerForm />
   </div>
 </template>
 
 <script>
-import ProjectForm from "@/components/projects/ProjectForm";
+import CustomerForm from "@/components/layouts/CustomerForm";
 import HistoryBack from "@/components/navigation/HistoryBack";
 import ViewTitle from "@/components/ViewTitle";
 export default {
@@ -14,7 +14,7 @@ export default {
   components: {
     ViewTitle,
     HistoryBack,
-    ProjectForm
+    CustomerForm
   },
   mounted() {
 

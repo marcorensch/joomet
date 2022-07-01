@@ -10,9 +10,9 @@
           </li>
         </router-link>
 
-        <router-link to="/projects" custom v-slot="{ href, navigate, isActive, isExactActive }">
-          <li id="projects-link" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/projects') }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="folder-tree" /><span>Projects</span></a>
+        <router-link to="/customers" custom v-slot="{ href, navigate, isActive, isExactActive }">
+          <li id="customers-link" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/customers') }">
+            <a :href="href" @click="navigate"><font-awesome-icon icon="folder-tree" /><span>Customers</span></a>
           </li>
         </router-link>
         <div>
@@ -20,11 +20,11 @@
         </div>
 
 
-        <router-link :to="{name: 'FileAnalyser'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
-          <li id="file-analyser" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/fileanalyser') }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="file-circle-check" /><span>FileAnalyser</span></a>
-          </li>
-        </router-link>
+<!--        <router-link :to="{name: 'FileAnalyser'}" custom v-slot="{ href, navigate, isActive, isExactActive }">-->
+<!--          <li id="file-analyser" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/fileanalyser') }">-->
+<!--            <a :href="href" @click="navigate"><font-awesome-icon icon="file-circle-check" /><span>FileAnalyser</span></a>-->
+<!--          </li>-->
+<!--        </router-link>-->
 
       </ul>
     </div>

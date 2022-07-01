@@ -7,6 +7,6 @@ const dbFactory = (fileName) => Datastore.create({
 });
 
 const db = {
-    projects: dbFactory('projects.db')
+    projects: dbFactory('customers.db')
 };
 module.exports = db;

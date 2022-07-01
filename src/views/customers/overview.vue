@@ -8,14 +8,14 @@
         </div>
 
         <div>
-          <router-link :to="{name: 'Projects.New'}" title="New Project" class="uk-button nx-button-default nx-button-success uk-button-small"><font-awesome-icon icon="folder-plus" /></router-link>
+          <router-link :to="{name: 'Customer.New'}" title="New Customer" class="uk-button nx-button-default nx-button-success uk-button-small"><font-awesome-icon icon="folder-plus" /></router-link>
         </div>
       </div>
     </div>
-    <div class="projects uk-position-relative uk-overflow-auto" uk-height-viewport="offset-top:true">
-      <div v-if="projects" class="uk-position-cover projects-container">
-      <ProjectsGrid v-if="listLayout=='grid'" :projects="projects" />
-      <ProjectsList v-if="listLayout=='list'" :projects="projects" />
+    <div class="customers uk-position-relative uk-overflow-auto" uk-height-viewport="offset-top:true">
+      <div v-if="customers" class="uk-position-cover customers-container">
+      <Grid v-if="listLayout=='grid'" :items="customers" />
+      <List v-if="listLayout=='list'" :items="customers" />
       </div>
     </div>
   </div>
@@ -24,18 +24,18 @@
 
 <script>
 // @ is an alias to /src
-import ProjectsGrid from '@/components/projects/grid/ProjectsGrid.vue'
-import ProjectsList from "@/components/projects/list/ProjectsList";
+import Grid from '@/components/layouts/grid/grid.vue'
+import List from "@/components/layouts/list/list";
 
 
 export default {
-  name: 'Projects',
+  name: 'projects-overview',
   components: {
-    ProjectsGrid, ProjectsList
+    Grid, List
   },
   data() {
     return {
-      projects: false,
+      customers: false,
       listLayout: 'grid', // Local
       settings : {}
     }
@@ -45,30 +45,28 @@ export default {
   },
   mounted(){
     console.log(this.projects)
-    if(!this.projects) this.triggerUpdate()
+    if(!this.customers) this.triggerUpdate()
 
     // Local Storage
     if(localStorage.appSettings) {
       this.settings = JSON.parse(localStorage.appSettings)
       this.listLayout = this.settings.listLayout
     }
-    if(localStorage.projectsLayout){
-      this.listLayout = localStorage.projectsLayout
+    if(localStorage.customersLayout){
+      this.listLayout = localStorage.customersLayout
       console.log(this.listLayout)
     }
-
-
   },
   methods : {
     async triggerUpdate(){
-      let args = {table:'projects',filter:{}}
+      let args = {table:'customers',filter:{}}
       window.ipcRenderer.invoke('GET_ITEMS', JSON.stringify(args)).then((result) => {
         console.log(result)
-        this.projects = result
+        this.customers = result
       })
     },
     setListType(type) {
-      localStorage.projectsLayout = type
+      localStorage.customersLayout = type
       this.listLayout = type
     }
   }
