@@ -55,10 +55,14 @@ export default {
   methods:{
     save(submitEvent){
       console.log("save clicked")
-      let formData = {};
-      formData.title = submitEvent.target.elements.title.value
-      formData.platform = submitEvent.target.elements.platform.value
-      window.ipcRenderer.invoke('save-category', formData).then((result) => {
+
+      let formData = {
+        table: 'projects',
+        title: submitEvent.target.elements.title.value,
+        platform: submitEvent.target.elements.platform.value
+      };
+
+      window.ipcRenderer.invoke('SAVE_ITEM', formData).then((result) => {
         console.log(result)
         // with hash, resulting in /about#team
         router.push({ name: 'Projects.Overview'})

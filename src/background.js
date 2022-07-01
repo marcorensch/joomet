@@ -4,8 +4,10 @@ import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import {indexOf} from "core-js/internals/array-includes";
+import {Checker, RowHelper} from "@/classes/FileAnalyserChecks";
 const path = require('path')
 const db = require('./db')
+const fs = require('fs')
 const fsPromisified = require('fs/promises');
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -154,17 +156,77 @@ ipcMain.handle('GET_ITEMS',   async(event, args) =>{
   return await db[payload.table].find(filter);
 })
 
-ipcMain.handle('save-category', async (event, item) =>{
-  console.log(item)
-  return await db.projects.insert({title: item.title, platform: item.platform})
+ipcMain.handle('REMOVE_ITEM', async (event, args) =>{
+  let payload = JSON.parse(args)
+  return await db[payload.table].remove(payload.filter)
+  //UpdateDB
+  //db[payload.table].persistence.compactDatafile()
 })
 
-ipcMain.handle('READ_FILE', async (event,filePath) =>{
-  console.log(filePath)
-  if(allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())){
-    return await fsPromisified.readFile(filePath, "utf-8");
-  }else{
-    return false
-  }
+ipcMain.handle('SAVE_ITEM', async (event, item) =>{
+  console.log(item)
+  return await db[item.table].insert({title: item.title, platform: item.platform})
+})
 
+// ipcMain.handle('READ_FILE', async (event,filePath) =>{
+//   if(fs.existsSync(filePath)){
+//     console.log(filePath)
+//     if(allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())){
+//       const fileContent = await fsPromisified.readFile(filePath, "utf-8");
+//       console.log(fileContent)
+//       if(fileContent){
+//         event.sender.send('FILE_FETCHED','pong')
+//       }
+//
+//     }else{
+//       throw `File: "${filePath}" has no valid Filetype`
+//     }
+//   }else{
+//     throw `File: "${filePath}" not found or not accessible`
+//   }
+// })
+
+ipcMain.on('READ_FILE', (event,filePath) => {
+  if(fs.existsSync(filePath)){
+    if(allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())){
+      fs.readFile(filePath, "utf-8", (err,fileContent)=>{
+        event.sender.send('FILE_FETCHED', path.basename(filePath))
+
+        const fileArr = fileContent.split('\n');
+
+        let fileDetails = {
+          rows: fileArr.length,
+          comments:0,
+          rowsChecked:0,
+        }
+
+        let analyse = [
+
+        ]
+        let rowNum = 0;
+        for(const row of fileArr) {
+          rowNum++
+          fileDetails.rowsChecked++
+          // event.sender.send('FILE_DETAILS', JSON.stringify(fileDetails))
+          if(!row.trim().length) continue;
+          if(row.startsWith(';')){
+            fileDetails.comments++
+            continue
+          }
+          //Checks
+          let [key,value, formatError] = Checker.checkRow(row)
+          let data = { row: rowNum, key, value, formatError }
+          data = RowHelper.overallStatus(data)
+          analyse.push( data )
+        }
+
+        event.sender.send('FILE_ANALYSIS', JSON.stringify(analyse))
+
+      });
+    }else{
+      throw `File: "${filePath}" has no valid Filetype`
+    }
+  }else{
+    throw `File: "${filePath}" not found or not accessible`
+  }
 })

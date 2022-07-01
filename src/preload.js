@@ -4,11 +4,11 @@ import { contextBridge, ipcRenderer } from 'electron'
 const ipc = {
     'render': {
         // From render to main.
-        'send': [],
+        'send': ['READ_FILE'],
         // From main to render.
-        'receive': ['FILE_FETCHED'],
+        'receive': ['FILE_FETCHED','FILE_DETAILS','FILE_ANALYSIS'],
         // From render to main and back again.
-        'sendReceive': ['GET_ITEMS','save-category', 'LOADED','READ_FILE']
+        'sendReceive': ['GET_ITEMS','REMOVE_ITEM','SAVE_ITEM', 'LOADED',]
     }
 };
 

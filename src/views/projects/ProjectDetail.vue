@@ -9,7 +9,7 @@
 
         <div class="uk-flex uk-flex-right">
           <div class="uk-margin-large-right uk-button-group" id="listtypeBtnGroup">
-
+            <button class="uk-button nx-button-default nx-button-danger uk-button-small" @click="deleteProject"><font-awesome-icon icon="trash-can" /></button>
           </div>
           <div>
             <router-link :to="{name: 'Projects.New'}" title="New Project" class="uk-button nx-button-default nx-button-success uk-button-small"><font-awesome-icon icon="folder-plus" /></router-link>
@@ -57,6 +57,15 @@ export default {
         this.project = results[0]
       })
     },
+    async deleteProject(){
+      if(this.id) {
+        let args = {table:'projects',filter:{_id: this.id}}
+        window.ipcRenderer.invoke('REMOVE_ITEM', JSON.stringify(args)).then((results) => {
+          console.log(results)
+          this.$router.replace({ name: 'Projects.Overview' })
+        })
+      }
+    }
   }
 }
 </script>
