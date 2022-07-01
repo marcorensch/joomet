@@ -19,6 +19,7 @@
     "core-js": "^3.8.3",
     "nedb-promises": "^6.0.3",
     "node-abi": "^3.8.0",
+    "pinia": "^2.0.14",
     "uikit": "^3.13.4",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",

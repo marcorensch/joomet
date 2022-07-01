@@ -1,12 +1,10 @@
 <template>
-  <div class="uk-padding">
 
-  </div>
 </template>
 
 <script>
 export default {
-  name: "ProjectEdit"
+  name: "TranslatorView"
 }
 </script>
 

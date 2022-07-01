@@ -15,15 +15,15 @@ class KeyChecker{
     }
 
     /**
-     * checks if the given string contains only characters (A-Z) and _
+     * checks if the given string contains only characters (a-zA-Z0-9) and _
      * (https://regex101.com/r/ZksJD1/1)
      * @param string
      * Note: valide mit Small letters damit dieser Fehler hier nicht matched!
      */
     static validCharacters(string){
-        let s = /^[_a-zA-Z]+$/.test(string)
+        let s = /^[_A-Z\d]+$/i.test(string)
         let m = s ? '':"Invalid characters found"
-        let h = s ? '':'Key values may only contain the characters A-Z or _'
+        let h = s ? '':'Key values may only contain the characters A-Z 0-9 or _'
         return CheckResult.result(s,m,h)
     }
 }

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Dashboard from "@/views/Dashboard";
+import Dashboard from "@/views/DashboardView";
 
 const routes = [
   {
@@ -8,23 +8,20 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/customers',
-    name: 'Customers.Overview',
-    component: () => import('@/views/customers/overview.vue'),
-    children:[
-    ]
+    path: '/checker',
+    name: 'File Analyser',
+    component: () => import('@/views/FileAnalyser/UploadView.vue'),
   },
   {
-    path: '/customers/:id',
-    name: 'Customer.Detail',
-    component: () => import('@/views/customers/detail.vue'),
+    path: '/checkerresult',
+    name: 'File Analyser Results',
+    component: () => import('@/views/FileAnalyser/ResultsView.vue'),
     props: true
   },
-
   {
-    path: '/customers/new',
-    name: 'Customer.New',
-    component: () => import('@/views/customers/new.vue'),
+    path: '/translator',
+    name: 'Translator',
+    component: () => import('@/views/TranslatorView.vue'),
   },
 
   {

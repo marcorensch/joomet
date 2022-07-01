@@ -14,7 +14,7 @@
 import GridExample from '@/components/GridExample.vue'
 
 export default {
-  name: 'Dashboard',
+  name: 'DashboardView',
   components: {
     GridExample
   }
