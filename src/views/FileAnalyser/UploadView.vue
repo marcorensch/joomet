@@ -1,25 +1,27 @@
 <template>
   <div class="fileanalyser-upload" uk-height-viewport>
-    <div class="uk-position-cover uk-overflow-auto">
-      <ViewTitle title="FileAnalyser"/>
-      <div class="uk-flex uk-flex-center" uk-height-viewport="offset-top:true">
-        <div class="uk-width-1-1 uk-padding">
-          <div>
+    <ViewTitle title="FileAnalyser"/>
+    <div class="uk-position-relative" uk-height-viewport="offset-top:true">
+      <div class="uk-position-cover uk-overflow-auto">
+        <div class="uk-flex uk-flex-center" >
+          <div class="uk-width-1-1 uk-padding">
             <div>
-              <div class="description uk-margin-bottom">
-                With the FileAnalyser you can validate language files of Joomla! Load the corresponding *.ini file into
-                the application to start the check.
+              <div>
+                <div class="description uk-margin-bottom">
+                  With the FileAnalyser you can validate language files of Joomla! Load the corresponding *.ini file into
+                  the application to start the check.
+                </div>
+                <div class="dropbox uk-flex uk-flex-middle uk-flex-center">
+                  <input type="file" name="filename"
+                         @change="filesChange($event.target.name, $event.target.files); 1"
+                         accept=".ini,.txt" class="input-file">
+                  <p>
+                    Drag your file here to begin<br> or click to browse
+                  </p>
+                </div>
               </div>
-              <div class="dropbox uk-flex uk-flex-middle uk-flex-center">
-                <input type="file" name="filename"
-                       @change="filesChange($event.target.name, $event.target.files); 1"
-                       accept=".ini,.txt" class="input-file">
-                <p>
-                  Drag your file here to begin<br> or click to browse
-                </p>
-              </div>
-            </div>
 
+            </div>
           </div>
         </div>
       </div>
@@ -30,7 +32,7 @@
 <script>
 import router from "@/router";
 import ViewTitle from "@/components/ViewTitle";
-import { useFileStore } from "@/stores/file";
+import {useFileStore} from "@/stores/file";
 
 const store = useFileStore();
 
@@ -40,15 +42,17 @@ export default {
   methods: {
     async filesChange(name, files) {
       if (files.length > 0) {
-        const file = files[0];
-        console.log(file.type);
-        if(file.type === "text/plain" || file.type === "text/ini"){
+        let file = files[0];
+        if (['ini','txt'].includes(this.getExtension(file))) {
           store.file = file;
           router.push({name: 'File Analyser Results'});
-        }else{
+        } else {
           alert("Please select a valid file");
         }
       }
+    },
+    getExtension(file) {
+      return file.name.split('.').pop().toLowerCase();
     }
   },
 }
