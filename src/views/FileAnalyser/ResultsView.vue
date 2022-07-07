@@ -2,10 +2,12 @@
   <div class="fileanalyser-results" uk-height-viewport>
     <div class="uk-position-cover uk-overflow-auto">
 
-      <ViewTitle title="FileAnalyser Results"/>
+      <ViewTitle title="FileAnalyser Results">
+        <component :is="slot_component"></component>
+      </ViewTitle>
 
-      <div class="uk-margin">
-        <table class="uk-table uk-table-divider uk-table-hover">
+      <div class="">
+        <table class="uk-table uk-table-striped uk-table-hover">
           <thead>
           <tr>
             <th>Row</th>
@@ -13,12 +15,11 @@
             <th class="uk-width-expand">Description</th>
           </tr>
           </thead>
-          <tbody uk-scrollspy="target: tr.error; cls:uk-animation-slide-right-small; delay:200">
+          <tbody uk-scrollspy="target: >tr; cls:uk-animation-slide-right-small; delay:200">
           <AnalyserRow v-for="data of fileData" :key="data.row" :row="data"/>
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
 </template>
@@ -27,14 +28,13 @@
 import AnalyserRow from "@/components/fileanalyser/AnalyserRow";
 import ViewTitle from "@/components/ViewTitle";
 import { useFileStore } from "@/stores/file";
+import Menu from "@/components/fileanalyser/Menu";
 
 const store = useFileStore();
 
 export default {
   name: "ResultsView",
-  components: {AnalyserRow, ViewTitle},
-  props:{
-  },
+  components: {AnalyserRow, ViewTitle, Menu},
   data(){
     return {
       fileStats: {
@@ -44,7 +44,10 @@ export default {
         comments: 0,
       },
       fileData: [],
+      slot_component: "Menu",
     }
+  },
+  methods: {
   },
   mounted() {
     if(store.file){

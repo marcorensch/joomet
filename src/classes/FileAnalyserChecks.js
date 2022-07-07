@@ -22,6 +22,10 @@ class KeyChecker{
      */
     static validCharacters(string){
         let s = /^[_A-Z\d]+$/i.test(string)
+        if(!s) {
+            let search = string.search(/!^[_A-Z\d]+$/i)
+            console.log(search)
+        }
         let m = s ? '':"Invalid characters found"
         let h = s ? '':'Key values may only contain the characters A-Z 0-9 or _'
         return CheckResult.result(s,m,h)
