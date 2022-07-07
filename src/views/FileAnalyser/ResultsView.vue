@@ -1,12 +1,11 @@
 <template>
   <div class="fileanalyser-results" uk-height-viewport>
-    <div class="uk-position-cover uk-overflow-auto">
+    <ViewTitle title="FileAnalyser Results">
+      <component :is="slot_component"></component>
+    </ViewTitle>
+    <div class="uk-position-relative" uk-height-viewport="offset-top:true">
+      <div class="uk-position-cover uk-overflow-auto">
 
-      <ViewTitle title="FileAnalyser Results">
-        <component :is="slot_component"></component>
-      </ViewTitle>
-
-      <div class="">
         <table class="uk-table uk-table-striped uk-table-hover">
           <thead>
           <tr>
@@ -19,6 +18,7 @@
           <AnalyserRow v-for="data of fileData" :key="data.row" :row="data"/>
           </tbody>
         </table>
+
       </div>
     </div>
   </div>
@@ -27,7 +27,7 @@
 <script>
 import AnalyserRow from "@/components/fileanalyser/AnalyserRow";
 import ViewTitle from "@/components/ViewTitle";
-import { useFileStore } from "@/stores/file";
+import {useFileStore} from "@/stores/file";
 import AnalyserMenu from "@/components/fileanalyser/AnalyserMenu";
 
 const store = useFileStore();
@@ -35,7 +35,7 @@ const store = useFileStore();
 export default {
   name: "ResultsView",
   components: {AnalyserRow, ViewTitle, AnalyserMenu},
-  data(){
+  data() {
     return {
       fileStats: {
         rows: 0,
@@ -47,10 +47,9 @@ export default {
       slot_component: "AnalyserMenu",
     }
   },
-  methods: {
-  },
+  methods: {},
   mounted() {
-    if(store.file){
+    if (store.file) {
       window.ipcRenderer.send('READ_FILE', store.file.path);
     }
     window.ipcRenderer.receive('FILE_DETAILS', (data) => {
