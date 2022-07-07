@@ -40,8 +40,14 @@ export default {
   methods: {
     async filesChange(name, files) {
       if (files.length > 0) {
-        store.setFile(files[0]);
-        router.push({name: 'File Analyser Results'});
+        const file = files[0];
+        console.log(file.type);
+        if(file.type === "text/plain" || file.type === "text/ini"){
+          store.file = file;
+          router.push({name: 'File Analyser Results'});
+        }else{
+          alert("Please select a valid file");
+        }
       }
     }
   },
