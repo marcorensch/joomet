@@ -28,7 +28,7 @@
 import AnalyserRow from "@/components/fileanalyser/AnalyserRow";
 import ViewTitle from "@/components/ViewTitle";
 import { useFileStore } from "@/stores/file";
-import Menu from "@/components/fileanalyser/Menu";
+import Menu from "@/components/fileanalyser/AnalyserMenu";
 
 const store = useFileStore();
 
@@ -44,7 +44,7 @@ export default {
         comments: 0,
       },
       fileData: [],
-      slot_component: "Menu",
+      slot_component: "AnalyserMenu",
     }
   },
   methods: {
@@ -60,6 +60,7 @@ export default {
     })
     window.ipcRenderer.receive('FILE_ANALYSIS', (data) => {
       this.fileData = JSON.parse(data);
+      console.log(this.fileData);
     })
   }
 }

@@ -1,5 +1,5 @@
 <template v-if="row">
-  <template v-for="(check,key, index) of row.checks" :key="index">
+  <template v-for="(check,key,index) of row.checks" :key="index">
     <tr v-if="!check.status" class="uk-position-relative error">
       <td>{{ rowNum }}</td>
       <td class="uk-text-left"><span class="uk-label">{{ checkedType }}</span></td>

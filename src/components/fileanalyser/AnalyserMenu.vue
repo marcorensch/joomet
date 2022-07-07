@@ -13,7 +13,7 @@ import { useFileStore } from "@/stores/file";
 const store = useFileStore();
 
 export default {
-  name: "Menu",
+  name: "AnalyserMenu",
   methods: {
     checkAgain(){
       this.fileData = [];
