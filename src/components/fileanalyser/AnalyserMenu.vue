@@ -1,6 +1,6 @@
 <template>
   <div class="uk-button-group">
-    <button class="uk-button uk-button-small nx-button-default" @click="switchScene('checker')"><font-awesome-icon icon="chevron-left" /> Back</button>
+    <button class="uk-button uk-button-small nx-button-default" @click="switchScene('checker')"><font-awesome-icon icon="file" /> Load File</button>
     <button class="uk-button uk-button-small nx-button-default" @click="checkAgain"><font-awesome-icon icon="rotate" /> Check Again</button>
     <button class="uk-button uk-button-small nx-button-default" @click="switchScene('translator')"><font-awesome-icon icon="language" />  Translate</button>
   </div>

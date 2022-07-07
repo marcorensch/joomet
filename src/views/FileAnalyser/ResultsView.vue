@@ -28,13 +28,13 @@
 import AnalyserRow from "@/components/fileanalyser/AnalyserRow";
 import ViewTitle from "@/components/ViewTitle";
 import { useFileStore } from "@/stores/file";
-import Menu from "@/components/fileanalyser/AnalyserMenu";
+import AnalyserMenu from "@/components/fileanalyser/AnalyserMenu";
 
 const store = useFileStore();
 
 export default {
   name: "ResultsView",
-  components: {AnalyserRow, ViewTitle, Menu},
+  components: {AnalyserRow, ViewTitle, AnalyserMenu},
   data(){
     return {
       fileStats: {
