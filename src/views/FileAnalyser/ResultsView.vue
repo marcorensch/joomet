@@ -1,20 +1,26 @@
 <template>
   <div class="fileanalyser-results" uk-height-viewport>
-    <ViewTitle title="FileAnalyser Results">
-      <component :is="slot_component"></component>
-    </ViewTitle>
-    <div class="uk-position-relative" uk-height-viewport="offset-top:true">
-      <div class="uk-position-cover uk-overflow-auto">
-
-        <table class="uk-table uk-table-striped uk-table-hover">
+    <div>
+      <ViewTitle title="FileAnalyser Results">
+        <component :is="slot_component"></component>
+      </ViewTitle>
+      <div id="table-header-container">
+        <table id="table-header" uk-sticky="offset:60;" style="z-index: 984;"
+               class="uk-table uk-table-middle uk-table-small">
           <thead>
           <tr>
-            <th>Row</th>
-            <th>Type</th>
+            <th style="min-width: 50px" class="uk-text-center">Row</th>
+            <th style="min-width: 100px">Type</th>
             <th class="uk-width-expand">Description</th>
           </tr>
           </thead>
-          <tbody uk-scrollspy="target: >tr; cls:uk-animation-slide-right-small; delay:200">
+        </table>
+      </div>
+    </div>
+    <div class="uk-position-relative" uk-height-viewport="offset-top:true">
+      <div class="uk-position-cover uk-overflow-auto">
+        <table id="table-content" class="uk-table uk-table-striped uk-table-hover uk-table-middle uk-table-small">
+          <tbody>
           <AnalyserRow v-for="data of fileData" :key="data.row" :row="data"/>
           </tbody>
         </table>
@@ -29,6 +35,7 @@ import AnalyserRow from "@/components/fileanalyser/AnalyserRow";
 import ViewTitle from "@/components/ViewTitle";
 import {useFileStore} from "@/stores/file";
 import AnalyserMenu from "@/components/fileanalyser/AnalyserMenu";
+import router from "@/router";
 
 const store = useFileStore();
 
@@ -51,6 +58,8 @@ export default {
   mounted() {
     if (store.file) {
       window.ipcRenderer.send('READ_FILE', store.file.path);
+    } else {
+      router.push({name: 'File Analyser'});
     }
     window.ipcRenderer.receive('FILE_DETAILS', (data) => {
       for (const [key, value] of Object.entries(JSON.parse(data))) {
@@ -66,5 +75,7 @@ export default {
 </script>
 
 <style scoped>
-
+#table-header {
+  margin: 0 !important;
+}
 </style>

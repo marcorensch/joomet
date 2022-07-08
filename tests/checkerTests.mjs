@@ -44,5 +44,9 @@ describe("Value Checks", () => {
             let t = ValueChecker.balancedHtmlTags("<div>span div </div>")
             assert.equal(t.status, true);
         });
+        it("Should return false for <div><span><p></div>", function () {
+            let t = ValueChecker.balancedHtmlTags("<div><span></p>")
+            assert.equal(t.status, false);
+        });
     })
 })

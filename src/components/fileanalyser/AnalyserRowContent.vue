@@ -9,20 +9,20 @@
 
         <div :id="'modal-'+rowNum+'-'+index+'-'+key" class="uk-flex-top" uk-modal>
           <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-border-rounded">
-            <div class="uk-text-bold">Error - {{ check.message }}</div>
+            <div class="uk-text-bold"><font-awesome-icon icon="exclamation-triangle" /> {{ check.message }}</div>
             <button class="uk-modal-close-default" type="button" uk-close></button>
-            <table class="uk-table uk-table-small">
+            <table class="uk-table uk-table-small uk-table-middle uk-table-justify uk-table-divider">
               <tbody>
               <tr>
-                <th class="uk-width-1-6">Row</th>
+                <td class="uk-width-1-6"><strong>Row</strong></td>
                 <td>{{ rowNum }}</td>
               </tr>
               <tr>
-                <th>String</th>
+                <td><strong>String</strong></td>
                 <td><code>{{ row.string }}</code></td>
               </tr>
               <tr>
-                <th>Info</th>
+                <td><strong>Information</strong></td>
                 <td><div v-html="check.help"></div></td>
               </tr>
               </tbody>

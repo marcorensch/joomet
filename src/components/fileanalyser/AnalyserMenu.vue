@@ -1,8 +1,8 @@
 <template>
   <div class="uk-button-group">
-    <button class="uk-button uk-button-small nx-button-default" @click="switchScene('checker')"><font-awesome-icon icon="file" /> Load File</button>
-    <button class="uk-button uk-button-small nx-button-default" @click="checkAgain"><font-awesome-icon icon="rotate" /> Check Again</button>
-    <button class="uk-button uk-button-small nx-button-default" @click="switchScene('translator')"><font-awesome-icon icon="language" />  Translate</button>
+    <button class="uk-button uk-button-small nx-button-default" uk-tooltip="Load File" @click="switchScene('checker')"><font-awesome-icon icon="file" /> <span class="uk-visible@m">Load File</span></button>
+    <button class="uk-button uk-button-small nx-button-default" uk-tooltip="Check again" @click="checkAgain"><font-awesome-icon icon="rotate" /> <span class="uk-visible@m">Check again</span></button>
+    <button class="uk-button uk-button-small nx-button-default" uk-tooltip="Translate" @click="switchScene('translator')"><font-awesome-icon icon="language" />  <span class="uk-visible@m">Translate</span></button>
   </div>
 </template>
 

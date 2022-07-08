@@ -2,8 +2,8 @@
   <!-- Render if General Formatting Error : -->
   <template v-if="!row.general.status">
     <tr class="error uk-position-relative">
-      <td>{{ row.row }}</td>
-      <td class="uk-text-left"><span class="uk-label">General</span></td>
+      <td style="width: 50px">{{ row.row }}</td>
+      <td style="width: 100px" class="uk-text-left"><span class="uk-label">General</span></td>
       <td class="uk-text-left">{{ row.general.message }}</td>
     </tr>
   </template>

@@ -74,7 +74,7 @@ export default {
 #nav {
 a {
   color: #eeeeee;
-  font-size: 1.1em;
+  font-size: 14px;
 
 &:hover{
    color: #f8f8f8;
@@ -86,7 +86,7 @@ a {
 }
 
 #nav li {
-  padding: 4px 0 4px 10px;
+  padding: 2px 0 2px 6px;
   border-radius: 6px;
 }
 

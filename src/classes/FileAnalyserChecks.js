@@ -27,7 +27,8 @@ class Checker{
                 checks: {
                     encapsulated: ValueChecker.encapsulated(v),
                     lastCharIsNotEscaped: ValueChecker.lastCharIsNotEscaped(v),
-                    doubleQuotesEscaped: ValueChecker.doubleQuotesEscaped(v)
+                    doubleQuotesEscaped: ValueChecker.doubleQuotesEscaped(v),
+                    balancedHtmlTags: ValueChecker.balancedHtmlTags(v)
                 }
             }
         }
