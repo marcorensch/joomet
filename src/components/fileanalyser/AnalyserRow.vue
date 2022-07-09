@@ -1,28 +1,30 @@
 <template>
-  <!-- Render if General Formatting Error : -->
-  <template v-if="!row.general.status">
-    <tr class="error uk-position-relative">
-      <td style="width: 50px">{{ row.row }}</td>
-      <td style="width: 100px" class="uk-text-left"><span class="uk-label">General</span></td>
-      <td class="uk-text-left">{{ row.general.message }}</td>
-    </tr>
-  </template>
-  <!-- Render if Key / Value Error: -->
-  <template v-else>
-    <AnalyserRowContent :row="row.key" :row-num="row.row" :checked-type="'Key'"/>
-    <AnalyserRowContent :row="row.value" :row-num="row.row" :checked-type="'Value'"/>
-  </template>
+
+  <tr class="uk-position-relative error">
+    <td>{{ row.rowNum }}</td>
+    <td class="uk-text-left"><span class="uk-label">{{ row.check.type }}</span></td>
+    <td class="uk-text-left">
+      {{ row.check.message }}
+
+      <AnalyserDetailModal :row="row" el-index="itemIndex" />
+
+    </td>
+  </tr>
 </template>
 
 <script>
-import AnalyserRowContent from "@/components/fileanalyser/AnalyserRowContent";
+import AnalyserDetailModal from "@/components/fileanalyser/AnalyserDetailModal";
 
 export default {
   name: "AnalyserRow",
   components: {
-    AnalyserRowContent
+    AnalyserDetailModal
   },
   props: {
+    itemIndex: {
+      type: Number,
+      default: 0,
+    },
     row: {
       type: Object,
       default: () => ({}),

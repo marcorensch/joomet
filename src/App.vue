@@ -88,4 +88,11 @@
   font-size: .6em;
 }
 
+.nx-container{
+  padding: 20px;
+  border: 1px solid #ffffff24;
+  border-radius: 4px;
+  background: #39343c;
+}
+
 </style>

@@ -21,7 +21,7 @@
       <div class="uk-position-cover uk-overflow-auto">
         <table id="table-content" class="uk-table uk-table-striped uk-table-hover uk-table-middle uk-table-small">
           <tbody>
-          <AnalyserRow v-for="data of fileData" :key="data.row" :row="data"/>
+          <AnalyserRow v-for="(item, index) of fileData.checkerResults" :key="index" :row="item" :item-index="index"/>
           </tbody>
         </table>
 
@@ -62,13 +62,14 @@ export default {
       router.push({name: 'File Analyser'});
     }
     window.ipcRenderer.receive('FILE_DETAILS', (data) => {
-      for (const [key, value] of Object.entries(JSON.parse(data))) {
+      console.log(data)
+      for (const [key, value] of Object.entries(data)) {
         this.fileStats[key] = value;
       }
     })
     window.ipcRenderer.receive('FILE_ANALYSIS', (data) => {
-      this.fileData = JSON.parse(data);
-      console.log(this.fileData);
+      this.fileData = data;
+      console.log(data);
     })
   }
 }

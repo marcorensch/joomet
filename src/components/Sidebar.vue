@@ -18,7 +18,7 @@
 
         <router-link :to="{name:'Translator'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
           <li id="translator-link" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/translator') }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="language" /><span>Translator</span></a>
+            <a :href="href" @click="navigate"><font-awesome-icon icon="language" /><span>TranslatorLayer</span></a>
           </li>
         </router-link>
         <div>

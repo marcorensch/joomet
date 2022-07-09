@@ -3,32 +3,26 @@
 import {app, protocol, BrowserWindow, ipcMain, shell} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
-import {indexOf} from "core-js/internals/array-includes";
 import {Checker} from "@/classes/FileAnalyserChecks";
+import * as deepl from 'deepl-node';
 
-const path = require('path')
+import * as path from "path";
+import fs from "fs";
+
 const db = require('./db')
-const fs = require('fs')
-const fsPromisified = require('fs/promises');
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const allowedFileTypesForCheck = ['.ini', '.txt']
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-    {scheme: 'app', privileges: {secure: true, standard: true}}
-])
+protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}])
 
 async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
         titleBarStyle: 'hidden',
 
-        width: 1600,
-        height: 600,
-        minWidth: 800,
-        minHeight: 500,
-        webPreferences: {
+        width: 1600, height: 600, minWidth: 800, minHeight: 500, webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
             nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -169,24 +163,6 @@ ipcMain.handle('SAVE_ITEM', async (event, item) => {
     return await db[item.table].insert({title: item.title, platform: item.platform})
 })
 
-// ipcMain.handle('READ_FILE', async (event,filePath) =>{
-//   if(fs.existsSync(filePath)){
-//     console.log(filePath)
-//     if(allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())){
-//       const fileContent = await fsPromisified.readFile(filePath, "utf-8");
-//       console.log(fileContent)
-//       if(fileContent){
-//         event.sender.send('FILE_FETCHED','pong')
-//       }
-//
-//     }else{
-//       throw `File: "${filePath}" has no valid Filetype`
-//     }
-//   }else{
-//     throw `File: "${filePath}" not found or not accessible`
-//   }
-// })
-
 ipcMain.on('READ_FILE', (event, filePath) => {
     if (fs.existsSync(filePath)) {
         if (allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())) {
@@ -197,31 +173,15 @@ ipcMain.on('READ_FILE', (event, filePath) => {
                 const fileContentArray = fileContent.split('\n');
 
                 let fileDetails = {
-                    rows: fileContentArray.length,
-                    comments: 0,
-                    rowsChecked: 0,
+                    rows: fileContentArray.length, comments: 0, rowsChecked: 0,
                 }
 
-                let analyse = [];
+                event.sender.send('FILE_DETAILS', fileDetails)
 
-                let rowNum = 0;
-                for (const row of fileContentArray) {
-                    rowNum++
-                    fileDetails.rowsChecked++
-                    // event.sender.send('FILE_DETAILS', JSON.stringify(fileDetails))
-                    if (!row.trim().length) continue;
-                    if (row.startsWith(';')) {
-                        fileDetails.comments++
-                        continue
-                    }
-                    // Do Checks
-                    let [key, value, general] = Checker.checkRow(row)
-                    let data = {row: rowNum, key, value, general}
-                    analyse.push(data)
-                }
+                let result = Checker.checkRows(fileContentArray)
 
                 // Send Checker Results to Renderer
-                event.sender.send('FILE_ANALYSIS', JSON.stringify(analyse))
+                event.sender.send('FILE_ANALYSIS', result)
 
             });
         } else {
@@ -231,3 +191,18 @@ ipcMain.on('READ_FILE', (event, filePath) => {
         throw `File: "${filePath}" not found or not accessible`
     }
 })
+
+ipcMain.on('GET_DEEPL_STATUS', async (event, args) => {
+    console.log(args);
+    try{
+        const translator = new deepl.Translator(args.key)
+        const usage = await translator.getUsage();
+        event.sender.send('DEEPL_STATUS', usage)
+    }catch(error){
+        event.sender.send('DEEPL_ERROR', {error})
+    }
+
+
+
+
+});

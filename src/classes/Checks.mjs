@@ -11,7 +11,7 @@ class KeyChecker{
         let s = string.toUpperCase() === string && string !== string.toLowerCase()
         let m = s ? '':"lowercase character(s) found"
         let h = s ? '':`Key Values needs to be all in uppercase<br>Good: <code>KEY_FOR_STRING</code><br>Bad: <code>Key_for_String</code>`
-        return Result.create(s,m, h)
+        return new CheckResult(s,'key',m,h)
     }
 
     /**
@@ -24,7 +24,7 @@ class KeyChecker{
         let s = /^[_A-Z\d]+$/i.test(string)
         let m = s ? '':"Invalid characters found"
         let h = s ? '':'Key values may only contain the characters A-Z 0-9 or _ (underscore), Spaces are not allowed'
-        return Result.create(s,m,h)
+        return new CheckResult(s,'key',m,h)
     }
 }
 
@@ -34,14 +34,14 @@ class ValueChecker{
         let s = string[string.length-1] === '"' && string[0] === '"'
         let m = s ? '' : 'Value is not correctly encapsulated by "'
         let h = s ? '' : `Double quotes in value strings must be escaped by backslashs.<br>Good: <code>&lt;div class=&#92;&quot;foo&#92;&quot;&gt;foo&lt;/div&gt;</code><br>Bad:<code>&lt;div class=&quot;foo&quot;&gt;foo&lt;/div&gt;</code>`
-        return Result.create(s,m,h)
+        return new CheckResult(s,'value',m,h)
     }
     static lastCharIsNotEscaped(string){
         string = string.trim()
         let s = !/\\"$/.test(string)
         let m = s ? '' : 'Last sign in String is a \\'
         let h = s ? '' : 'no backslash may be used in the last position of the string'
-        return Result.create(s,m,h)
+        return new CheckResult(s,'value',m,h)
     }
 
     static doubleQuotesEscaped(string) {
@@ -49,7 +49,7 @@ class ValueChecker{
         let s = !/(?<!\\)"/.test(string.slice(1, -1));
         let m = s ? '':'Unescaped Double Quotes found'
         let h = s ? '':`Double quotes in value strings must be escaped by backslashs<br>Good:<div class=\\"foo\\">foo</div><br>Bad: <div class="foo">foo</div>`
-        return Result.create(s,m,h)
+        return new CheckResult(s,'value',m,h)
     }
 
     static balancedHtmlTags(string){
@@ -72,14 +72,20 @@ class ValueChecker{
         }
         let m = s ? '':'Unbalanced HTML Tag(s) found'
         let h = s ? '':`HTML Tags in value strings should be balanced.<ul class="uk-list uk-list-collapse uk-list-striped uk-margin-remove-bottom uk-margin-small-top">${tagHintsText}</ul>`
-        return Result.create(s,m,h)
+        return new CheckResult(s,'value',m,h)
     }
 }
 
-class Result{
-    static create(status, message, help){
-        return {status, message, help}
+/**
+ * Wrapper Klasse als zukünftiger Layer für Modularisierung
+ */
+class CheckResult {
+    constructor(status, type, message, help) {
+        this.status = status;
+        this.type = type;
+        this.message = message;
+        this.help = help;
     }
 }
 
-export {KeyChecker, ValueChecker}
+export {KeyChecker, ValueChecker, CheckResult}

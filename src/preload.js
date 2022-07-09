@@ -4,9 +4,9 @@ import { contextBridge, ipcRenderer } from 'electron'
 const ipc = {
     'render': {
         // From render to main.
-        'send': ['READ_FILE'],
+        'send': ['READ_FILE','GET_DEEPL_STATUS'],
         // From main to render.
-        'receive': ['FILE_FETCHED','FILE_DETAILS','FILE_ANALYSIS'],
+        'receive': ['FILE_FETCHED','FILE_DETAILS','FILE_ANALYSIS','DEEPL_STATUS', 'DEEPL_ERROR'],
         // From render to main and back again.
         'sendReceive': ['GET_ITEMS','REMOVE_ITEM','SAVE_ITEM', 'LOADED',]
     }
