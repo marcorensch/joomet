@@ -9,8 +9,8 @@
                class="uk-table uk-table-middle uk-table-small">
           <thead>
           <tr>
-            <th style="min-width: 50px" class="uk-text-center">Row</th>
-            <th style="min-width: 100px">Type</th>
+            <th class="uk-text-center nx-width-xsmall">Row</th>
+            <th class="nx-width-xsmall">Type</th>
             <th class="uk-width-expand">Description</th>
           </tr>
           </thead>

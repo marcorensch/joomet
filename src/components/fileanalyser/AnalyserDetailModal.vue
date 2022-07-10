@@ -2,7 +2,7 @@
   <a :href="'#modal-'+row.rowNum+'-'+elIndex+'-'+row.check.type" uk-toggle class="uk-position-cover"></a>
   <div :id="'modal-'+row.rowNum+'-'+elIndex+'-'+row.check.type" class="uk-flex-top" uk-modal>
     <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-border-rounded">
-      <div class="uk-text-bold"><font-awesome-icon icon="exclamation-triangle" /> {{ row.check.message }}</div>
+      <div class="uk-modal-title"><font-awesome-icon icon="exclamation-triangle" /> {{ row.check.message }}</div>
       <button class="uk-modal-close-default" type="button" uk-close></button>
       <table class="uk-table uk-table-small uk-table-middle uk-table-justify uk-table-divider">
         <tbody>

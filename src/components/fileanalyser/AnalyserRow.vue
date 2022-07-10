@@ -1,8 +1,8 @@
 <template>
 
   <tr class="uk-position-relative error">
-    <td>{{ row.rowNum }}</td>
-    <td class="uk-text-left"><span class="uk-label">{{ row.check.type }}</span></td>
+    <td class="nx-width-xsmall">{{ row.rowNum }}</td>
+    <td class="uk-text-left nx-width-xsmall"><span class="uk-label">{{ row.check.type }}</span></td>
     <td class="uk-text-left">
       {{ row.check.message }}
 

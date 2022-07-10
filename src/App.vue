@@ -94,5 +94,15 @@
   border-radius: 4px;
   background: #39343c;
 }
+.uk-modal{
+  backdrop-filter: blur(10px);
+}
+.uk-modal-title{
+  font-size:22px;
+}
+.nx-width-xsmall{
+  min-width: 70px;
+  width: 70px;
+}
 
 </style>

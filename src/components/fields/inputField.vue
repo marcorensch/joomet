@@ -4,7 +4,7 @@
       <label :for="id">{{ label }}</label>
     </div>
     <div class="uk-form-controls">
-      <input type="text" :id="id" class="uk-input" @keyup="valueChanged" :required="required">
+      <input type="text" :id="id" class="uk-input" @keyup="valueChanged" :required="required"  :value="modelValue" >
     </div>
   </div>
 </template>
@@ -14,6 +14,10 @@ export default {
   name: "inputField",
   emits: ['valueChanged'],
   props:{
+    modelValue: {
+      type: String,
+      default: ''
+    },
     id: {
       type: String,
       required: true,
@@ -26,6 +30,7 @@ export default {
       type: String,
       default: 'false',
     },
+
   },
   methods:{
     valueChanged(e){

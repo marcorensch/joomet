@@ -6,6 +6,7 @@
         <div class="uk-width-1-1 uk-padding uk-flex uk-flex-center">
           <form class="uk-form uk-form-horizontal uk-text-left uk-width-1-1 uk-width-4-5@l">
             <div class="nx-container">
+              <h3 class="uk-h4">DeepL API Usage Statistics</h3>
               <table class="uk-table uk-table-justify uk-table-small uk-margin-remove-bottom">
                 <tbody>
                   <tr>
@@ -26,21 +27,26 @@
                   </tr>
                 </tbody>
               </table>
+              <div class="uk-flex uk-flex-right">
+                <div>
+                  <button class="uk-button nx-button-default" @click="getDeeplUsage">Update Usage Information</button>
+                </div>
+              </div>
             </div>
-            <InputField :label="'DeepL API Key'" :id="'key'" :required="'true'" @valueChanged="handleValueChange"/>
-            <SelectField :label="'Source Language'" :id="'srcLng'" :required="'true'" :options="languageOptions"
-                         @valueChanged="handleValueChange"/>
-            <SelectField :label="'Target Language'" :id="'srcLng'" :required="'true'" :options="languageOptions"
-                         @valueChanged="handleValueChange"/>
+            <div class="uk-margin-top">
+              <InputField :label="'DeepL API Key'" :id="'key'" :required="'true'" @valueChanged="handleValueChange" v-model="settings.key"/>
+              <SelectField :label="'Source Language'" :id="'srcLng'" :required="'true'" :options="languageOptions"
+                           @valueChanged="handleValueChange"/>
+              <SelectField :label="'Target Language'" :id="'srcLng'" :required="'true'" :options="languageOptions"
+                           @valueChanged="handleValueChange"/>
+            </div>
+
             <div class="uk-margin-top uk-flex uk-flex-right uk-grid-small">
               <div>
                 <button type="reset" class="uk-button uk-button-danger">Delete</button>
               </div>
               <div>
                 <button type="submit" class="uk-button uk-button-success" @click="saveSettings">Save</button>
-              </div>
-              <div>
-                <button class="uk-button" @click="getDeeplUsage">Key Status</button>
               </div>
             </div>
           </form>
@@ -81,6 +87,9 @@ export default {
     window.ipcRenderer.send('GET_SETTINGS');
     window.ipcRenderer.receive('GET_SETTINGS', (data)=>{
       console.log(data)
+      this.settings.key = data.key;
+      this.settings.sourceLanguage = data.srcLng;
+      this.settings.targetLanguage = data.trgLng;
     });
 
     window.ipcRenderer.receive('DEEPL_STATUS', (data) => {
@@ -124,7 +133,8 @@ export default {
         }
       }
     },
-    getDeeplUsage(){
+    getDeeplUsage(e){
+      e.preventDefault();
       window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
     },
     saveSettings(e) {
