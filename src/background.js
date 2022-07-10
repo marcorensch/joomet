@@ -4,7 +4,9 @@ import {app, protocol, BrowserWindow, ipcMain, shell} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 import {Checker} from "@/classes/FileAnalyserChecks";
-import * as deepl from 'deepl-node';
+// import * as deepl from 'deepl-node';
+
+import Translator from "@/classes/Translator.mjs";
 
 import * as path from "path";
 import fs from "fs";
@@ -198,9 +200,9 @@ ipcMain.on('READ_FILE', (event, filePath) => {
 ipcMain.on('GET_DEEPL_STATUS', async (event, args) => {
     console.log(args);
     try{
-        const translator = new deepl.Translator(args.key)
-        const usage = await translator.getUsage();
-        event.sender.send('DEEPL_STATUS', usage)
+        const translator = new Translator(args.key)
+        // const usage = await translator.getUsage();
+        // event.sender.send('DEEPL_STATUS', usage)
     }catch(error){
         event.sender.send('DEEPL_ERROR', {error})
     }
