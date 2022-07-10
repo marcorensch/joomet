@@ -9,7 +9,10 @@ import * as deepl from 'deepl-node';
 import * as path from "path";
 import fs from "fs";
 
-const db = require('./db')
+// User Settings
+const Store = require('electron-store');
+const store = new Store();
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const allowedFileTypesForCheck = ['.ini', '.txt']
@@ -201,8 +204,23 @@ ipcMain.on('GET_DEEPL_STATUS', async (event, args) => {
     }catch(error){
         event.sender.send('DEEPL_ERROR', {error})
     }
-
-
-
-
 });
+
+ipcMain.on('SAVE_SETTINGS', async (event, args) => {
+    try{
+        store.set('settings', args)
+        event.sender.send('SETTINGS_SAVED', store.get('settings'))
+    }catch(error){
+        console.log(error)
+        event.sender.send('SETTINGS_ERROR', {error})
+    }
+});
+
+ipcMain.on('GET_SETTINGS', async (event, args) => {
+    try{
+        event.sender.send('GET_SETTINGS', store.get('settings'))
+    }catch(error){
+        event.sender.send('SETTINGS_ERROR', {error})
+    }
+});
+

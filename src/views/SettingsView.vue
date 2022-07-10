@@ -73,8 +73,15 @@ export default {
       }
     }
   },
+  beforeUnmount() {
+    window.ipcRenderer.removeAllListeners();
+  },
   mounted() {
-    this.loadSettings();
+    // Get Settings
+    window.ipcRenderer.send('GET_SETTINGS');
+    window.ipcRenderer.receive('GET_SETTINGS', (data)=>{
+      console.log(data)
+    });
 
     window.ipcRenderer.receive('DEEPL_STATUS', (data) => {
       console.log(data)
@@ -87,6 +94,11 @@ export default {
 
     window.ipcRenderer.receive('DEEPL_ERROR', (data) => {
       alert(`DeepL API Error occurred: \n${data.error}`)
+    })
+
+    window.ipcRenderer.receive('SETTINGS_SAVED', (data) => {
+      console.log(`Settings saved`)
+      console.log(data)
     })
 
   },
@@ -115,12 +127,14 @@ export default {
     getDeeplUsage(){
       window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
     },
-    loadSettings() {
-    },
     saveSettings(e) {
       e.preventDefault();
       console.log('saveSettings')
-      window.ipcRenderer.send('SAVE_SETTINGS', this.settings);
+      window.ipcRenderer.send('SAVE_SETTINGS', {
+        key: this.settings.key,
+        srcLng: this.settings.defaults.sourceLanguage,
+        trgLng: this.settings.defaults.targetLanguage,
+      });
     },
     handleValueChange(value, target) {
       console.log(target)

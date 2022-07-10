@@ -4,9 +4,9 @@ import { contextBridge, ipcRenderer } from 'electron'
 const ipc = {
     'render': {
         // From render to main.
-        'send': ['READ_FILE','GET_DEEPL_STATUS'],
+        'send': ['READ_FILE','GET_DEEPL_STATUS','SAVE_SETTINGS','GET_SETTINGS'],
         // From main to render.
-        'receive': ['FILE_FETCHED','FILE_DETAILS','FILE_ANALYSIS','DEEPL_STATUS', 'DEEPL_ERROR'],
+        'receive': ['FILE_FETCHED','FILE_DETAILS','FILE_ANALYSIS','DEEPL_STATUS', 'DEEPL_ERROR','GET_SETTINGS','SETTINGS_SAVED'],
         // From render to main and back again.
         'sendReceive': ['GET_ITEMS','REMOVE_ITEM','SAVE_ITEM', 'LOADED',]
     }
@@ -24,10 +24,6 @@ const exposedAPI = {
     receive: (channel, listener) => {
         let validChannels = ipc.render.receive;
         if (validChannels.includes(channel)) {
-
-            // Show me the prototype (use DevTools in the render thread)
-            console.log(ipcRenderer);
-
             // Deliberately strip event as it includes `sender`.
             ipcRenderer.on(channel, (event, ...args) => listener(...args));
         }
@@ -36,9 +32,11 @@ const exposedAPI = {
     invoke: (channel, args) => {
         let validChannels = ipc.render.sendReceive;
         if (validChannels.includes(channel)) {
-            console.log(`Invoked via ${channel}`)
             return ipcRenderer.invoke(channel, args);
         }
+    },
+    removeAllListeners: () => {
+        ipcRenderer.removeAllListeners()
     }
 }
 // Expose ipcRenderer to the client
