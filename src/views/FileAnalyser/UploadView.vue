@@ -40,7 +40,7 @@ export default {
   name: "UploadView",
   components: {ViewTitle},
   methods: {
-    async filesChange(name, files) {
+    filesChange(name, files) {
       if (files.length > 0) {
         let file = files[0];
         if (['ini','txt'].includes(this.getExtension(file))) {

@@ -56,7 +56,7 @@ export default {
   },
   methods: {},
   mounted() {
-    if (store.file) {
+    if (store.hasOwnProperty('file') && store.file) {
       window.ipcRenderer.send('READ_FILE', store.file.path);
     } else {
       router.push({name: 'File Analyser'});
