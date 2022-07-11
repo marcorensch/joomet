@@ -10,7 +10,7 @@
               <table class="uk-table uk-table-justify uk-table-small uk-margin-remove-bottom">
                 <tbody>
                   <tr>
-                    <th>Characters Total</th>
+                    <th class="uk-width-1-4">Characters Total</th>
                     <td class="uk-text-right">{{ charsLimit }}</td>
                   </tr>
                   <tr>
@@ -18,7 +18,12 @@
                     <td class="uk-text-right">{{ charsCount }}</td>
                   </tr>
                   <tr>
-                    <td colspan="2">
+                    <th>
+                      <div style="height:30px" class="uk-flex uk-flex-middle">
+                        <div><span>Quota Used</span></div>
+                      </div>
+                    </th>
+                    <td>
                       <div class="nx-progress">
                         <span id="charsPercentageText"></span>
                         <progress id="charsPercentage" value="0" max="100"></progress>
