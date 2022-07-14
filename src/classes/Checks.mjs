@@ -53,15 +53,19 @@ class ValueChecker{
     }
 
     static balancedHtmlTags(string){
-        const searchFor = ['div','p','span','h1','h2','h3','h4','h5','h6','article','post','code','pre','blockquote','ul','ol','li','table','tr','td','th','thead','tbody','tfoot','img','a','b','i','u','strong','em','link','meta','title','header','footer','section','nav','aside','main','figure','figcaption','video','audio','iframe','canvas','svg','map','area','time','meter','progress','form','fieldset','legend','label','button','select','option','textarea','datalist','output','details','summary']
+        const searchFor = ['div','p','span','h1','h2','h3','h4','h5','h6','article','post','code','pre','blockquote','ul','ol','li','table','tr','td','th','thead','tbody','tfoot','a','b','i','u','strong','em','link','meta','title','header','footer','section','nav','aside','main','figure','figcaption','video','audio','iframe','canvas','svg','map','area','time','meter','progress','form','fieldset','legend','label','button','select','option','textarea','datalist','output','details','summary']
         let s = true
         let tagHintsText = ''
         let tagHints = []
         for(const tag of searchFor) {
-            if(string.includes(`<${tag}`) || string.includes(`</${tag}`)) {
-                let regExp = new RegExp(`<\/?${tag}\\s+.+>|<\/?${tag}>`, 'g')
-                const matches = string.match(regExp)
-                if(matches && matches.length%2 !== 0) {
+            if(string.includes(`<${tag}`) || string.includes(`</${tag}>`)) {
+
+                let regExpStartTag = new RegExp(`<${tag}(\\s|>)`, 'g')
+                let regExpEndTag = new RegExp(`<\/${tag}\\s?>`, 'g')
+                let matchesStart = string.match(regExpStartTag)||[]
+                let matchesEnd = string.match(regExpEndTag)||[]
+
+                if(matchesStart.length !== matchesEnd.length) {
                     s = false;
                     tagHints.push(`<b>${tag} Tag</b> is not balanced.`)
                 }
