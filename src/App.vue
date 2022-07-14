@@ -104,5 +104,8 @@
   min-width: 70px;
   width: 70px;
 }
+.uk-tooltip {
+  max-width:800px;
+}
 
 </style>

@@ -59,7 +59,7 @@ class ValueChecker{
         let tagHints = []
         for(const tag of searchFor) {
             if(string.includes(`<${tag}`) || string.includes(`</${tag}`)) {
-                let regExp = new RegExp(`<\/?${tag}`, 'g')
+                let regExp = new RegExp(`<\/?${tag}\\s+.+>|<\/?${tag}>`, 'g')
                 const matches = string.match(regExp)
                 if(matches && matches.length%2 !== 0) {
                     s = false;

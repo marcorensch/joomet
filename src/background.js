@@ -9,6 +9,9 @@ import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 
 import {Checker} from "@/classes/FileAnalyserChecks";
 import * as deepl from 'deepl-node';
+import FileHelper from "@/classes/FileHelper.mjs";
+
+const fileHelper = new FileHelper();
 
 // User Settings
 const Store = require('electron-store');
@@ -170,24 +173,14 @@ ipcMain.handle('SAVE_ITEM', async (event, item) => {
 ipcMain.on('READ_FILE', (event, filePath) => {
     if (fs.existsSync(filePath)) {
         if (allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())) {
-            fs.readFile(filePath, "utf-8", (err, fileContent) => {
-                // Send File fetched event to renderer
-                event.sender.send('FILE_FETCHED', path.basename(filePath))
+            const fileContentArray = fileHelper.readFileSync(filePath)
+            let fileDetails = fileHelper.getFileDetails(fileContentArray)
 
-                const fileContentArray = fileContent.split('\n');
+            event.sender.send('FILE_DETAILS', fileDetails)
+            let result = Checker.checkRows(fileContentArray)
 
-                let fileDetails = {
-                    rows: fileContentArray.length, comments: 0, rowsChecked: 0,
-                }
-
-                event.sender.send('FILE_DETAILS', fileDetails)
-
-                let result = Checker.checkRows(fileContentArray)
-
-                // Send Checker Results to Renderer
-                event.sender.send('FILE_ANALYSIS', result)
-
-            });
+            // Send Checker Results to Renderer
+            event.sender.send('FILE_ANALYSIS', result)
         } else {
             throw `File: "${filePath}" has no valid Filetype`
         }
