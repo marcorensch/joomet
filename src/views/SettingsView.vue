@@ -9,27 +9,27 @@
               <h3 class="uk-h4">DeepL API Usage Statistics</h3>
               <table class="uk-table uk-table-justify uk-table-small uk-margin-remove-bottom">
                 <tbody>
-                  <tr>
-                    <th class="uk-width-1-4">Characters Total</th>
-                    <td class="uk-text-right">{{ charsLimit }}</td>
-                  </tr>
-                  <tr>
-                    <th>Characters Used</th>
-                    <td class="uk-text-right">{{ charsCount }}</td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <div style="height:30px" class="uk-flex uk-flex-middle">
-                        <div><span>Quota Used</span></div>
-                      </div>
-                    </th>
-                    <td>
-                      <div class="nx-progress">
-                        <div id="charsPercentageText" :class="{'uk-animation-fade':charsPercentage}"></div>
-                        <progress id="charsPercentage" value="0" max="100"></progress>
-                      </div>
-                    </td>
-                  </tr>
+                <tr>
+                  <th class="uk-width-1-4">Characters Total</th>
+                  <td class="uk-text-right">{{ charsLimit }}</td>
+                </tr>
+                <tr>
+                  <th>Characters Used</th>
+                  <td class="uk-text-right">{{ charsCount }}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <div style="height:30px" class="uk-flex uk-flex-middle">
+                      <div><span>Quota Used</span></div>
+                    </div>
+                  </th>
+                  <td>
+                    <div class="nx-progress">
+                      <div id="charsPercentageText" :class="{'uk-animation-fade':charsPercentage}"></div>
+                      <progress id="charsPercentage" value="0" max="100"></progress>
+                    </div>
+                  </td>
+                </tr>
                 </tbody>
               </table>
               <div class="uk-flex uk-flex-right">
@@ -39,10 +39,20 @@
               </div>
             </div>
             <div class="uk-margin-top">
-              <InputField :label="'DeepL API Key'" :id="'key'" :required="'true'" @valueChanged="handleValueChange" v-model="settings.key"/>
-              <SelectField :label="'Source Language'" :id="'srcLng'" :required="'true'" :options="languageOptions"
+              <InputField :label="'DeepL API Key'" :id="'key'" :required="'true'" @valueChanged="handleValueChange"
+                          v-model="settings.key"/>
+              <SelectField :label="'Source Language'"
+                           :id="'sourceLanguage'"
+                           :required="'true'"
+                           :manualOption="{value:'AUTO',label:'Auto Detect'}"
+                           :options="languages"
+                           :selected="settings.sourceLanguage"
                            @valueChanged="handleValueChange"/>
-              <SelectField :label="'Target Language'" :id="'srcLng'" :required="'true'" :options="languageOptions"
+              <SelectField :label="'Target Language'"
+                           :id="'targetLanguage'"
+                           :required="'true'"
+                           :options="languages"
+                           :selected="settings.targetLanguage"
                            @valueChanged="handleValueChange"/>
             </div>
 
@@ -77,11 +87,10 @@ export default {
       charsPercentageDisplay: 0,
       settings: {
         key: '',
-        defaults: {
-          sourceLanguage: 'en',
-          targetLanguage: 'de',
-        }
-      }
+        sourceLanguage: 'EN',
+        targetLanguage: 'DE',
+      },
+      languages: [],
     }
   },
   beforeUnmount() {
@@ -89,23 +98,18 @@ export default {
   },
   mounted() {
     // Get Settings
-    window.ipcRenderer.send('GET_SETTINGS');
-    window.ipcRenderer.receive('GET_SETTINGS', (data)=>{
-      console.log(data)
-      if(data){
-        this.settings.key = data.key;
-        this.settings.sourceLanguage = data.srcLng;
-        this.settings.targetLanguage = data.trgLng;
-        if(this.settings.key){
-          this.getDeeplUsage(null);
-        }
+    window.ipcRenderer.invoke('GET_SETTINGS').then((settings) => {
+      for(let [key,value] of Object.entries(settings)) {
+        this.settings[key] = value;
       }
+      this.getDeeplUsage(null);
+      this.getLanguages();
     });
 
     window.ipcRenderer.receive('DEEPL_STATUS', (data) => {
       this.charsLimit = data.character.limit;
       this.charsCount = data.character.count;
-      if(this.charsCount > 0) {
+      if (this.charsCount > 0) {
         this.charsPercentage = Math.ceil(100 * this.charsCount / this.charsLimit) < 100 ? Math.ceil(100 * this.charsCount / this.charsLimit) : 100;
       }
       this.animateProgressBar();
@@ -115,25 +119,21 @@ export default {
       alert(`DeepL API Error occurred: \n${data.error}`)
     })
 
-    window.ipcRenderer.receive('SETTINGS_SAVED', (data) => {
-      console.log(`Settings saved`)
-      console.log(data)
-    })
-
   },
   methods: {
     animateProgressBar() {
       let value = 0;
       let max = this.charsPercentage;
       let progress = setInterval(move, 10);
+
       function move() {
-        if(max) value += 1;
-        document.getElementById('charsPercentageText').style.width = `${value-1}%`;
+        if (max) value += 1;
+        document.getElementById('charsPercentageText').style.width = `${value - 1}%`;
         document.getElementById('charsPercentageText').innerText = `${value}%`;
         document.getElementById('charsPercentage').value = value;
-        if(value >= 70 && value < 90){
+        if (value >= 70 && value < 90) {
           document.getElementById('charsPercentage').classList.add('progress-warning');
-        }else if(value >= 90){
+        } else if (value >= 90) {
           document.getElementById('charsPercentage').classList.add('progress-danger');
         }
 
@@ -143,21 +143,31 @@ export default {
         }
       }
     },
-    getDeeplUsage(e){
-      if(e) e.preventDefault();
-      window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
+    getDeeplUsage(e) {
+      if (e) e.preventDefault();
+      if(this.settings.key) window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
+    },
+    async getLanguages() {
+      const languages = await window.ipcRenderer.invoke('INV_GET_LANGUAGES');
+      this.languages = languages.map(lng => {
+        return {
+          label: lng.name,
+          value: lng.code
+        }
+      });
     },
     saveSettings(e) {
       e.preventDefault();
-      console.log('saveSettings')
-      window.ipcRenderer.send('SAVE_SETTINGS', {
+      window.ipcRenderer.invoke('SAVE_SETTINGS', {
         key: this.settings.key,
-        srcLng: this.settings.defaults.sourceLanguage,
-        trgLng: this.settings.defaults.targetLanguage,
+        sourceLanguage: this.settings.sourceLanguage,
+        targetLanguage: this.settings.targetLanguage,
+      }).then(() => {
+        if (this.settings.key) this.getDeeplUsage(null);
+        this.getLanguages();
       });
-      if(this.settings.key){
-        this.getDeeplUsage(null);
-      }
+
+
     },
     handleValueChange(value, target) {
       console.log(target)
@@ -170,16 +180,17 @@ export default {
 
 <style scoped>
 
-.nx-progress{
+.nx-progress {
   position: relative;
   display: block;
 }
-.nx-progress > progress:not([value]){
+
+.nx-progress > progress:not([value]) {
   width: 100%;
   height: 30px;
 }
 
-.nx-progress > progress[value]{
+.nx-progress > progress[value] {
   /* Reset the default appearance */
   -webkit-appearance: none;
   appearance: none;
@@ -206,7 +217,6 @@ export default {
 .nx-progress > progress.progress-danger::-webkit-progress-value {
   background: #d20000;
 }
-
 
 
 #charsPercentageText {

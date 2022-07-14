@@ -117,7 +117,6 @@ ipcMain.handle("LOADED", (event) => {
 })
 
 ipcMain.handle('INV_READ_FILE',(event, file)=>{
-    console.log(file)
     if (fs.existsSync(file.path)) {
         if (allowedFileTypesForCheck.includes(path.extname(file.path).toLowerCase())) {
             console.log('all fine')
@@ -132,6 +131,32 @@ ipcMain.handle('INV_READ_FILE',(event, file)=>{
     } else {
         throw `File: "${file.name}" not found in ${file.path} or not accessible`
     }
+})
+
+ipcMain.handle('INV_GET_LANGUAGES',async(e)=>{
+    // const settings = store.get('settings')
+    // if(settings.key){
+    //     const translator = new deepl.Translator(settings.key);
+    //     return await translator.getSourceLanguages();
+    // }
+
+    return store.get('languages');
+
+})
+
+ipcMain.handle('GET_SETTINGS',(e)=>{
+    return store.get('settings')
+})
+
+ipcMain.handle('SAVE_SETTINGS',async(e,settings)=> {
+    console.log(settings)
+    store.set('settings', settings)
+    //Update Languages cache:
+    if(settings.key){
+        const translator = new deepl.Translator(settings.key);
+        store.set('languages', await translator.getSourceLanguages())
+    }
+
 })
 
 ipcMain.on('GET_DEEPL_STATUS', async (event, args) => {

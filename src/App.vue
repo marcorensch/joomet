@@ -48,6 +48,9 @@
 </style>
 
 <style lang="less">
+html, body{
+  background: #221d27;
+}
 *{
   user-select: none;
 }

@@ -10,7 +10,7 @@
             <div>
               <font-awesome-icon icon="chart-line" />
             </div>
-            <div v-if="fileStats.file && fileStats.file.name" class="uk-visible@l">
+            <div v-if="fileStats.file && fileStats.file.name" class="uk-visible@m">
               <b>File:</b> <span :uk-tooltip="fileStats.file.path">{{fileStats.file.name}}</span>
             </div>
             <div v-if="fileStats.rows">
@@ -84,7 +84,9 @@ export default {
     };
   },
   mounted() {
-
+    if(this.store.file) {
+      this.handleFileChanged(this.store.file);
+    }
   },
   methods: {
     async handleFileChanged(file) {

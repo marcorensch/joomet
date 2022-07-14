@@ -3,7 +3,7 @@
     <ViewTitle title="Translator"/>
     <div class="uk-position-relative" uk-height-viewport="offset-top:true">
       <div class="uk-position-cover uk-overflow-auto">
-        <div class="uk-width-1-1 uk-padding">
+        <div v-if="store.file" class="uk-width-1-1 uk-padding">
           <div class="uk-form uk-form-horizontal uk-text-left">
             <div class="uk-margin">
               <div class="uk-form-label">
@@ -12,7 +12,7 @@
               <div class="uk-form-controls">
                 <div class="uk-grid-collapse" uk-grid>
                   <div class="uk-width-expand">
-                    <input id="filepath" class="uk-input uk-width-1-1" type="text" placeholder="Select file" disabled v-model="filePath">
+                    <input id="filepath" class="uk-input uk-width-1-1" type="text" placeholder="Select file" disabled v-model="store.file.path">
                   </div>
                   <div class="uk-width-auto">
                     <div class="uk-position-relative">
@@ -28,6 +28,7 @@
             <SelectField id="trgLng" label="Target Language" />
           </div>
         </div>
+        <Upload v-else @file-changed="handleFileChanged" />
       </div>
     </div>
   </div>
@@ -37,28 +38,25 @@
 import ViewTitle from "@/components/ViewTitle";
 import SelectField from "@/components/fields/selectField";
 import {useFileStore} from "@/stores/file";
-import router from "@/router";
 
-const store = useFileStore();
+import Upload from "@/components/layouts/Upload";
 
 export default {
   name: "TranslatorView",
   components: {
+    Upload,
     ViewTitle,
     SelectField,
   },
   data() {
     return {
+      store : useFileStore(),
       srcLng: '',
       trgLng: '',
-      filePath: '',
     };
   },
   mounted() {
-    if (store.hasOwnProperty('file')) {
-      console.log(store.file)
-      this.filePath = store.file.path;
-    }
+
   },
   methods: {
     filesChange(name, files) {
@@ -66,12 +64,14 @@ export default {
       if (files.length > 0) {
         let file = files[0];
         if (['ini','txt'].includes(this.getExtension(file))) {
-          store.file = file;
-          this.filePath = store.file.path;
+          this.handleFileChanged(file);
         } else {
           alert("Please select a valid file");
         }
       }
+    },
+    handleFileChanged(file) {
+      this.store.file = file;
     },
     getExtension(file) {
       return file.name.split('.').pop().toLowerCase();

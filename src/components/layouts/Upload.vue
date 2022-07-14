@@ -31,6 +31,7 @@ const store = useFileStore();
 
 export default {
   name: "Upload",
+  emits: ['file-changed'],
   methods: {
     filesChange(name, files) {
       if (files.length > 0) {

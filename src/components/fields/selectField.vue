@@ -4,8 +4,9 @@
       <label :for="id">{{ label }}</label>
     </div>
     <div class="uk-form-controls">
-      <select :id="id" class="uk-select" @change="valueChanged" :required="required">
-
+      <select :id="id" class="uk-select" @change="valueChanged" :required="required" :value="selected">
+          <option v-if="manualOption" :value="manualOption.value">{{ manualOption.label }}</option>
+          <option v-for="option in options" :value="option.value">{{ option.label }}</option>
       </select>
     </div>
   </div>
@@ -24,9 +25,21 @@ export default {
       type: String,
       required: true,
     },
+    manualOption: {
+      type: Object,
+      default: null,
+    },
     required: {
       type: String,
       default: 'false',
+    },
+    options: {
+      type: Array,
+      required: true,
+    },
+    selected: {
+      type: String,
+      default: '',
     },
   },
   methods:{
