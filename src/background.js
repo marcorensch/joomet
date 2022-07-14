@@ -19,6 +19,8 @@ const store = new Store();
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
+console.log(app.getPath('userData'));
+
 const allowedFileTypesForCheck = ['.ini', '.txt']
 
 // Scheme must be registered before the app is ready
@@ -110,82 +112,25 @@ if (isDevelopment) {
 }
 
 /* IPC */
-
-//ipc
-ipcMain.on('test', (event, data) => {
-    console.log("backend tests called")
-    // and return:
-    event.sender.send('test', 'return direct')
-    // const webContents = event.sender
-    // const win = BrowserWindow.fromWebContents(webContents)
-    //
-    // win.webContents.send('foo', 'bar')
-    // win.webContents.send('tests', {'SAVED': 'File Saved'});
-})
-
-//PingPong
-ipcMain.on('pingpong', (event, data) => {
-    console.log(data)
-    event.sender.send('pingpong', 'pong')
-})
-
-// ipcMain.handle('read-table', async (event, arg) =>{
-//   console.log("clicked received in backend");
-//   let response = "BAR"
-//   let prom = new Promise( (resolve) => setTimeout(function(){return resolve(response)}, 2000), (reject) => reject() );
-//   let result = await prom;
-//   console.log ('invokeMain response to Renderer:', prom);
-//   return result;
-// })
-
 ipcMain.handle("LOADED", (event) => {
-    let data = {
-        appVersion: app.getVersion(),
-    };
-    return data;
+    return {appVersion: app.getVersion()};
 })
 
-ipcMain.handle('GET_ITEMS', async (event, args) => {
-    let payload = JSON.parse(args)
-    let filter = {}
-
-    if (payload.filter) {
-        // build the filter
-        filter = payload.filter
-    }
-
-    // 'Select * from Projects
-    return await db[payload.table].find(filter);
-})
-
-ipcMain.handle('REMOVE_ITEM', async (event, args) => {
-    let payload = JSON.parse(args)
-    return await db[payload.table].remove(payload.filter)
-    //UpdateDB
-    //db[payload.table].persistence.compactDatafile()
-})
-
-ipcMain.handle('SAVE_ITEM', async (event, item) => {
-    console.log(item)
-    return await db[item.table].insert({title: item.title, platform: item.platform})
-})
-
-ipcMain.on('READ_FILE', (event, filePath) => {
-    if (fs.existsSync(filePath)) {
-        if (allowedFileTypesForCheck.includes(path.extname(filePath).toLowerCase())) {
-            const fileContentArray = fileHelper.readFileSync(filePath)
-            let fileDetails = fileHelper.getFileDetails(fileContentArray)
-
-            event.sender.send('FILE_DETAILS', fileDetails)
+ipcMain.handle('INV_READ_FILE',(event, file)=>{
+    console.log(file)
+    if (fs.existsSync(file.path)) {
+        if (allowedFileTypesForCheck.includes(path.extname(file.path).toLowerCase())) {
+            console.log('all fine')
+            const fileContentArray = fileHelper.readFileSync(file.path)
+            let fileStats = fileHelper.getFileDetails(fileContentArray)
             let result = Checker.checkRows(fileContentArray)
-
-            // Send Checker Results to Renderer
-            event.sender.send('FILE_ANALYSIS', result)
+            fileStats.problems = result.checkerResults.length
+            return {fileStats, result}
         } else {
-            throw `File: "${filePath}" has no valid Filetype`
+            throw `File: "${file.name}" has no valid Filetype`
         }
     } else {
-        throw `File: "${filePath}" not found or not accessible`
+        throw `File: "${file.name}" not found in ${file.path} or not accessible`
     }
 })
 
@@ -210,7 +155,7 @@ ipcMain.on('SAVE_SETTINGS', async (event, args) => {
     }
 });
 
-ipcMain.on('GET_SETTINGS', async (event, args) => {
+ipcMain.on('GET_SETTINGS', async (event) => {
     try{
         event.sender.send('GET_SETTINGS', store.get('settings'))
     }catch(error){

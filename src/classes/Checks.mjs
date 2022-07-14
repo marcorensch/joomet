@@ -39,7 +39,7 @@ class ValueChecker{
     static lastCharIsNotEscaped(string){
         string = string.trim()
         let s = !/\\"$/.test(string)
-        let m = s ? '' : 'Last sign in String is a \\'
+        let m = s ? '' : 'Last character in String is a backslash (\\)'
         let h = s ? '' : 'no backslash may be used in the last position of the string'
         return new CheckResult(s,'value',m,h)
     }

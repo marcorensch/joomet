@@ -25,7 +25,7 @@
                     </th>
                     <td>
                       <div class="nx-progress">
-                        <span id="charsPercentageText"></span>
+                        <div id="charsPercentageText" :class="{'uk-animation-fade':charsPercentage}"></div>
                         <progress id="charsPercentage" value="0" max="100"></progress>
                       </div>
                     </td>
@@ -92,17 +92,22 @@ export default {
     window.ipcRenderer.send('GET_SETTINGS');
     window.ipcRenderer.receive('GET_SETTINGS', (data)=>{
       console.log(data)
-      this.settings.key = data.key;
-      this.settings.sourceLanguage = data.srcLng;
-      this.settings.targetLanguage = data.trgLng;
+      if(data){
+        this.settings.key = data.key;
+        this.settings.sourceLanguage = data.srcLng;
+        this.settings.targetLanguage = data.trgLng;
+        if(this.settings.key){
+          this.getDeeplUsage(null);
+        }
+      }
     });
 
     window.ipcRenderer.receive('DEEPL_STATUS', (data) => {
-      console.log(data)
       this.charsLimit = data.character.limit;
       this.charsCount = data.character.count;
-      this.charsPercentage = Math.ceil(100 * this.charsCount / this.charsLimit) < 100 ? Math.ceil(100 * this.charsCount / this.charsLimit) : 100;
-
+      if(this.charsCount > 0) {
+        this.charsPercentage = Math.ceil(100 * this.charsCount / this.charsLimit) < 100 ? Math.ceil(100 * this.charsCount / this.charsLimit) : 100;
+      }
       this.animateProgressBar();
     })
 
@@ -118,12 +123,11 @@ export default {
   },
   methods: {
     animateProgressBar() {
-      console.log(this.charsPercentage)
       let value = 0;
       let max = this.charsPercentage;
       let progress = setInterval(move, 10);
       function move() {
-        value += 1;
+        if(max) value += 1;
         document.getElementById('charsPercentageText').style.width = `${value-1}%`;
         document.getElementById('charsPercentageText').innerText = `${value}%`;
         document.getElementById('charsPercentage').value = value;
@@ -135,11 +139,12 @@ export default {
 
         if (value >= max) {
           clearInterval(progress);
+          document.getElementById('charsPercentageText').classList.remove('uk-animation-fade');
         }
       }
     },
     getDeeplUsage(e){
-      e.preventDefault();
+      if(e) e.preventDefault();
       window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
     },
     saveSettings(e) {
@@ -150,6 +155,9 @@ export default {
         srcLng: this.settings.defaults.sourceLanguage,
         trgLng: this.settings.defaults.targetLanguage,
       });
+      if(this.settings.key){
+        this.getDeeplUsage(null);
+      }
     },
     handleValueChange(value, target) {
       console.log(target)
@@ -201,13 +209,16 @@ export default {
 
 
 
-.nx-progress > span {
+#charsPercentageText {
   position: absolute;
   display: inline-block;
   color: #fff;
   text-align: right;
   line-height: 30px;
   font-weight: bold;
+  box-sizing: border-box;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 
 </style>

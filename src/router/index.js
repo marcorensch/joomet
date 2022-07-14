@@ -10,13 +10,7 @@ const routes = [
   {
     path: '/checker',
     name: 'File Analyser',
-    component: () => import('@/views/FileAnalyser/UploadView.vue'),
-  },
-  {
-    path: '/checkerresult',
-    name: 'File Analyser Results',
-    component: () => import('@/views/FileAnalyser/ResultsView.vue'),
-    props: true
+    component: () => import('@/views/FileAnalyserView.vue'),
   },
   {
     path: '/translator',

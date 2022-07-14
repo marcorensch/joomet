@@ -1,22 +1,22 @@
 <template>
-  <div class="fileanalyser-results" uk-height-viewport>
+  <div class="fileanalyser" uk-height-viewport>
     <div>
-      <ViewTitle title="FileAnalyser Results">
-        <component :is="slot_component"></component>
+      <ViewTitle title="FileAnalyser">
+        <component v-if="store.file" :is="slot_component" />
       </ViewTitle>
-      <div class="uk-position-bottom uk-position-z-index">
+      <div v-if="store.file" class="uk-position-bottom uk-position-z-index">
         <div class="uk-text-meta uk-text-small file-stats">
           <div class="uk-child-width-auto uk-grid-small stats-grid" uk-grid>
             <div>
               <font-awesome-icon icon="chart-line" />
             </div>
-            <div v-if="fileStats.file && fileStats.file.name">
+            <div v-if="fileStats.file && fileStats.file.name" class="uk-visible@l">
               <b>File:</b> <span :uk-tooltip="fileStats.file.path">{{fileStats.file.name}}</span>
             </div>
             <div v-if="fileStats.rows">
               <b>Rows:</b> {{fileStats.rows}}
             </div>
-            <div v-if="fileStats.comments">
+            <div v-if="fileStats.comments" class="uk-visible@l">
               <b>Comments:</b> {{fileStats.comments}}
             </div>
             <div v-if="fileStats.translations">
@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div id="table-header-container">
+      <div v-if="store.file" id="table-header-container">
         <table id="table-header" uk-sticky="offset:60;" style="z-index: 984;"
                class="uk-table uk-table-middle uk-table-small">
           <thead>
@@ -41,34 +41,37 @@
           </thead>
         </table>
       </div>
-    </div>
-    <div class="uk-position-relative" uk-height-viewport="offset-top:true">
-      <div class="uk-position-cover uk-overflow-auto">
-        <table id="table-content" class="uk-table uk-table-striped uk-table-hover uk-table-middle uk-table-small">
-          <tbody>
-          <AnalyserRow v-for="(item, index) of fileData.checkerResults" :key="index" :row="item" :item-index="index"/>
-          </tbody>
-        </table>
 
+      <div v-if="store.file" class="uk-position-relative" uk-height-viewport="offset-top:true">
+        <div class="uk-position-cover uk-overflow-auto">
+          <table id="table-content" class="uk-table uk-table-striped uk-table-hover uk-table-middle uk-table-small uk-margin-large-bottom">
+            <tbody>
+            <AnalyserRow v-for="(item, index) of fileData.checkerResults" :key="index" :row="item" :item-index="index"/>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div v-else class="uk-position-relative" uk-height-viewport="offset-top:true">
+        <Upload @file-changed="handleFileChanged" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import AnalyserRow from "@/components/fileanalyser/AnalyserRow";
-import ViewTitle from "@/components/ViewTitle";
-import {useFileStore} from "@/stores/file";
-import AnalyserMenu from "@/components/fileanalyser/AnalyserMenu";
-import router from "@/router";
 
-const store = useFileStore();
+import ViewTitle from "@/components/ViewTitle";
+import AnalyserRow from "@/components/fileanalyser/AnalyserRow";
+import AnalyserMenu from "@/components/fileanalyser/AnalyserMenu";
+import {useFileStore} from "@/stores/file";
+import Upload from "@/components/layouts/Upload";
 
 export default {
-  name: "ResultsView",
-  components: {AnalyserRow, ViewTitle, AnalyserMenu},
+  name: "FileAnalyser",
+  components:{Upload, ViewTitle, AnalyserRow, AnalyserMenu},
   data() {
     return {
+      store: useFileStore(),
       fileStats: {
         file:{},
         rows:0,
@@ -78,28 +81,25 @@ export default {
       },
       fileData: [],
       slot_component: "AnalyserMenu",
-    }
+    };
   },
-  methods: {},
   mounted() {
-    if (store.hasOwnProperty('file') && store.file) {
-      window.ipcRenderer.send('READ_FILE', store.file.path);
-    } else {
-      router.push({name: 'File Analyser'});
-    }
-    window.ipcRenderer.receive('FILE_DETAILS', (data) => {
-      console.log(data)
-      this.fileStats.file = store.file;
-      for (const [key, value] of Object.entries(data)) {
+
+  },
+  methods: {
+    async handleFileChanged(file) {
+      this.store.file = file;
+      this.fileStats.file = file;
+      const data = await window.ipcRenderer.invoke('INV_READ_FILE', {path:file.path, name:file.name});
+      console.log(data);
+      // Statistics
+      for(const [key, value] of Object.entries(data.fileStats)){
         this.fileStats[key] = value;
       }
-    })
-    window.ipcRenderer.receive('FILE_ANALYSIS', (data) => {
-      this.fileData = data;
-      this.fileStats.problems = data.checkerResults.length;
-      console.log(data);
-    })
-  }
+      // Problems Table
+      this.fileData = data.result;
+    },
+  },
 }
 </script>
 
@@ -111,6 +111,7 @@ export default {
   background-color: #252328;
   border-top:1px solid #1a191c;
   padding:5px 25px;
+  overflow-x: scroll;
 }
 .stats-grid > div:not(:last-of-type):not(:first-of-type)::after {
   content: "|";
