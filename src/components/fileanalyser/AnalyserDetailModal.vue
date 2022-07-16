@@ -21,7 +21,7 @@
             <td><strong>String</strong></td>
             <td>
               <div class="string-with-error-container">
-                <div class="string-with-error">{{ row.string }}</div>
+                <div class="string-with-error" v-html="string"></div>
               </div>
             </td>
           </tr>
@@ -46,6 +46,11 @@
 <script>
 export default {
   name: "AnalyserDetailModal",
+  data() {
+    return {
+      string: ""
+    }
+  },
   props: {
     elIndex: {
       type: Number,
@@ -57,6 +62,17 @@ export default {
       required: true,
     },
   },
+  mounted() {
+    console.log(this.row)
+    this.string = this.row.check.type === 'key' ? this.splitKey(this.row.string) : this.row.string;
+  },
+  methods: {
+    splitKey(string){
+      let arr = string.split("");
+      let encapsulated = arr.map((el) => {if(el === ' ') el = "&nbsp;"; return `<span class="key-char">${el}</span>`});
+      return encapsulated.join("");
+    }
+  }
 }
 </script>
 
@@ -71,5 +87,18 @@ export default {
   padding: 5px;
   font-size: .8em;
   color: #a94442;
+}
+.string-with-error >>> span.key-char{
+  display: inline-block;
+  padding-left:5px;
+  padding-right:5px;
+  border-right: 1px dotted #a94442;
+}
+
+.string-with-error >>> span.key-char:first-of-type {
+  border-left: 1px dotted #a94442;
+}
+.string-with-error >>> span.key-char:not(:last-of-type) {
+
 }
 </style>

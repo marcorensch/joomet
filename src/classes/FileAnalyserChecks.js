@@ -2,6 +2,12 @@ import {KeyChecker, ValueChecker, CheckResult} from './Checks.mjs'
 import {Row, RowCheck} from './Row.mjs'
 
 class Checker {
+
+    constructor(fileContent) {
+        this.fileContent = fileContent
+        this.languageKeys = []
+    }
+
     /**
      * @description Einstiegspunkt zur Überprüfung einer Zeile,
      * erstellt ein Row Objekt pro Zeile und ruft weitere Checks auf.
@@ -10,11 +16,11 @@ class Checker {
      * @return  Array von { Row, RowChecks }
      * @author Marco
      */
-    static checkRows(rows) {
+    checkRows() {
         // Checker Result only contains ROW items of rows with errors
         let checkerResults = []
         let rowNum = 1
-        for (const rowString of rows) {
+        for (const rowString of this.fileContent) {
             let rowObj = new Row(rowNum, rowString)
             rowObj.checks = this.checkRow(rowObj)
             // Push if errors found
@@ -24,16 +30,16 @@ class Checker {
             }
             rowNum++
         }
-        return {count: rows.length, checkerResults}
+        return {count: this.fileContent.length, checkerResults}
     }
 
     /**
      * @description Einstiegspunkt zur überprüfung eines Row Objekts
      *
      * @param   row     Row Object
-     * @author Marco, John
+     * @author Marco
      */
-    static checkRow(row) {
+    checkRow(row) {
         let keyChecks, valueChecks, formatChecks;
         formatChecks = {
             string: row.string,
@@ -54,12 +60,15 @@ class Checker {
                 }
             }
         } else {
-
+            let [checkDuplicates, languageKeys] = KeyChecker.checkDuplicates(row.key, row.rowNum, this.languageKeys)
+            this.languageKeys = languageKeys
+            console.log(this.languageKeys)
             keyChecks = {
                 string: row.key, // SCHLUESSEL
                 checks: {
                     allUpper: KeyChecker.allUppercase(row.key),
-                    validChars: KeyChecker.validCharacters(row.key)
+                    validChars: KeyChecker.validCharacters(row.key),
+                    duplicates: checkDuplicates
                 }
             };
             valueChecks = {
@@ -75,7 +84,7 @@ class Checker {
         return new RowCheck(formatChecks, keyChecks, valueChecks)
     }
 
-    static getFails(rowChecks, rowNum) {
+    getFails(rowChecks, rowNum) {
         let arrayOfErrors = []
         // Loop over Objects and build overal status
         for (const checkGroup of Object.values(rowChecks)) {

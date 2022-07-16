@@ -30,7 +30,7 @@ async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
         titleBarStyle: 'hidden',
-
+        icon: path.resolve(__static, 'icon.png'),
         width: 1600, height: 600, minWidth: 800, minHeight: 500, webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -119,17 +119,36 @@ ipcMain.handle("LOADED", (event) => {
 ipcMain.handle('INV_READ_FILE',(event, file)=>{
     if (fs.existsSync(file.path)) {
         if (allowedFileTypesForCheck.includes(path.extname(file.path).toLowerCase())) {
-            console.log('all fine')
+
             const fileContentArray = fileHelper.readFileSync(file.path)
             let fileStats = fileHelper.getFileDetails(fileContentArray)
-            let result = Checker.checkRows(fileContentArray)
+
+            // The Checker
+            let checker = new Checker(fileContentArray);
+            let result = checker.checkRows();
             fileStats.problems = result.checkerResults.length
+
             return {fileStats, result}
         } else {
             throw `File: "${file.name}" has no valid Filetype`
         }
     } else {
         throw `File: "${file.name}" not found in ${file.path} or not accessible`
+    }
+})
+
+ipcMain.handle('CHECK_API_KEY', async (event) => {
+    const settings = store.get('settings');
+    if (settings && settings.key) {
+        try{
+            const translator = new deepl.Translator(settings.key)
+            const usage = await translator.getUsage();
+            return {valid: true, usage}
+        }catch(error){
+            return {valid: false, error}
+        }
+    } else {
+        return {valid: false, error: 'No API Key set'}
     }
 })
 
@@ -145,18 +164,25 @@ ipcMain.handle('INV_GET_LANGUAGES',async(e)=>{
 })
 
 ipcMain.handle('GET_SETTINGS',(e)=>{
-    return store.get('settings')
+    return store.get('settings');
 })
 
-ipcMain.handle('SAVE_SETTINGS',async(e,settings)=> {
+ipcMain.handle('SAVE_SETTINGS',async(event,settings)=> {
     console.log(settings)
     store.set('settings', settings)
     //Update Languages cache:
     if(settings.key){
         const translator = new deepl.Translator(settings.key);
-        store.set('languages', await translator.getSourceLanguages())
+        try {
+            store.set('languages', await translator.getSourceLanguages())
+        } catch (error) {
+            event.sender.send('DEEPL_ERROR', {error})
+        }
     }
+})
 
+ipcMain.handle('DELETE_SETTINGS',(e)=>{
+    store.delete('settings')
 })
 
 ipcMain.on('GET_DEEPL_STATUS', async (event, args) => {
@@ -179,12 +205,3 @@ ipcMain.on('SAVE_SETTINGS', async (event, args) => {
         event.sender.send('SETTINGS_ERROR', {error})
     }
 });
-
-ipcMain.on('GET_SETTINGS', async (event) => {
-    try{
-        event.sender.send('GET_SETTINGS', store.get('settings'))
-    }catch(error){
-        event.sender.send('SETTINGS_ERROR', {error})
-    }
-});
-

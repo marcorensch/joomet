@@ -26,6 +26,20 @@ class KeyChecker{
         let h = s ? '':'Key values may only contain the characters A-Z 0-9 or _ (underscore), Spaces are not allowed'
         return new CheckResult(s,'key',m,h)
     }
+
+    static checkDuplicates(keyToCheck, row, keysArr){
+        // Cleanup
+        keyToCheck = keyToCheck.trim();
+        let checkResult = new CheckResult(true,'key','','')
+        for(let item of keysArr){
+            if(item.key === keyToCheck){
+                checkResult = new CheckResult(false,'key','Key already exists','Key already exists in row '+item.row);
+                break;
+            }
+        }
+        keysArr.push({row: row, key: keyToCheck})
+        return [checkResult, keysArr]
+    }
 }
 
 class ValueChecker{

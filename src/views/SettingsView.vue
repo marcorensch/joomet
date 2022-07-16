@@ -41,6 +41,11 @@
             <div class="uk-margin-top">
               <InputField :label="'DeepL API Key'" :id="'key'" :required="'true'" @valueChanged="handleValueChange"
                           v-model="settings.key"/>
+
+              <MessageContainer v-if="keyError" :message="errorMessage"
+                                :container-classes="'uk-form-controls uk-margin uk-animation-slide-top-small'"
+                                :alert-classes="'uk-alert uk-alert-danger uk-text-center'"/>
+
               <SelectField :label="'Source Language'"
                            :id="'sourceLanguage'"
                            :required="'true'"
@@ -58,7 +63,7 @@
 
             <div class="uk-margin-top uk-flex uk-flex-right uk-grid-small">
               <div>
-                <button type="reset" class="uk-button uk-button-danger">Delete</button>
+                <button type="reset" class="uk-button uk-button-danger" @click="deleteSettings">Delete</button>
               </div>
               <div>
                 <button type="submit" class="uk-button uk-button-success" @click="saveSettings">Save</button>
@@ -75,10 +80,11 @@
 import ViewTitle from "@/components/ViewTitle";
 import InputField from "@/components/fields/inputField";
 import SelectField from "@/components/fields/selectField";
+import MessageContainer from "@/components/MessageContainer";
 
 export default {
   name: "SettingsView",
-  components: {InputField, SelectField, ViewTitle},
+  components: {MessageContainer, InputField, SelectField, ViewTitle},
   data() {
     return {
       charsLimit: 0,
@@ -91,6 +97,9 @@ export default {
         targetLanguage: 'DE',
       },
       languages: [],
+      keyError: false,
+      deeplApiErrorText: '',
+      errorMessage: '',
     }
   },
   beforeUnmount() {
@@ -99,11 +108,13 @@ export default {
   mounted() {
     // Get Settings
     window.ipcRenderer.invoke('GET_SETTINGS').then((settings) => {
-      for(let [key,value] of Object.entries(settings)) {
-        this.settings[key] = value;
+      if (settings) {
+        for (let [key, value] of Object.entries(settings)) {
+          this.settings[key] = value;
+        }
+        this.getDeeplUsage(null);
+        this.getLanguages();
       }
-      this.getDeeplUsage(null);
-      this.getLanguages();
     });
 
     window.ipcRenderer.receive('DEEPL_STATUS', (data) => {
@@ -116,7 +127,10 @@ export default {
     })
 
     window.ipcRenderer.receive('DEEPL_ERROR', (data) => {
-      alert(`DeepL API Error occurred: \n${data.error}`)
+      this.keyError = true;
+      this.deeplApiErrorText = data.error;
+      this.errorMessage = `<p>It looks like the key you entered is invalid. Please check your key and try again.<br>Response from DeepL: <i>${this.deeplApiErrorText}</i></p>`
+      //alert(`DeepL API Error occurred: \n${data.error}`)
     })
 
   },
@@ -145,7 +159,7 @@ export default {
     },
     getDeeplUsage(e) {
       if (e) e.preventDefault();
-      if(this.settings.key) window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
+      if (this.settings.key) window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
     },
     async getLanguages() {
       const languages = await window.ipcRenderer.invoke('INV_GET_LANGUAGES');
@@ -157,17 +171,28 @@ export default {
       });
     },
     saveSettings(e) {
+      this.keyError = false;
       e.preventDefault();
       window.ipcRenderer.invoke('SAVE_SETTINGS', {
         key: this.settings.key,
         sourceLanguage: this.settings.sourceLanguage,
         targetLanguage: this.settings.targetLanguage,
       }).then(() => {
-        if (this.settings.key) this.getDeeplUsage(null);
-        this.getLanguages();
+        if (!this.keyError) {
+          this.getDeeplUsage(null);
+          this.getLanguages();
+        }
       });
-
-
+    },
+    deleteSettings(e) {
+      e.preventDefault();
+      window.ipcRenderer.invoke('DELETE_SETTINGS').then(() => {
+        this.settings = {
+          key: '',
+          sourceLanguage: 'EN',
+          targetLanguage: 'DE',
+        };
+      });
     },
     handleValueChange(value, target) {
       console.log(target)

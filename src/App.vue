@@ -32,8 +32,8 @@
     mounted() {
       window.ipcRenderer.invoke('LOADED','').then((result) => {
         this.appInfo = result
-        console.log(result)
       })
+      this.$router.push('/')
     },
     methods:{
 
@@ -48,11 +48,14 @@
 </style>
 
 <style lang="less">
-html, body{
+html, body, div#app{
   background: #221d27;
 }
 *{
   user-select: none;
+}
+a:not(.external-link), button:not(.external-link){
+  cursor: default !important;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

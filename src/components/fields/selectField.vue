@@ -4,7 +4,7 @@
       <label :for="id">{{ label }}</label>
     </div>
     <div class="uk-form-controls">
-      <select :id="id" class="uk-select" @change="valueChanged" :required="required" :value="selected">
+      <select :id="id" class="uk-select" @change="valueChanged" :required="required" :value="selected" :class="{'uk-disabled':disabled}">
           <option v-if="manualOption" :value="manualOption.value">{{ manualOption.label }}</option>
           <option v-for="option in options" :value="option.value">{{ option.label }}</option>
       </select>
@@ -40,6 +40,10 @@ export default {
     selected: {
       type: String,
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   methods:{

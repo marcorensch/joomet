@@ -1,27 +1,21 @@
 <template>
-    <div class="uk-position-cover uk-overflow-auto">
-      <div class="uk-flex uk-flex-center" >
-        <div class="uk-width-1-1 uk-padding">
-          <div>
-            <div>
-              <div class="description uk-margin-bottom">
-                With the FileAnalyser you can validate language files of Joomla! Load the corresponding *.ini file into
-                the application to start the check.
-              </div>
-              <div class="dropbox uk-flex uk-flex-middle uk-flex-center">
-                <input type="file" name="filename"
-                       @change="filesChange($event.target.name, $event.target.files); 1"
-                       accept=".ini,.txt" class="input-file">
-                <p>
-                  Drag your file here to begin<br> or click to browse
-                </p>
-              </div>
-            </div>
-
+  <div class="uk-position-cover uk-overflow-auto">
+    <div class="uk-height-1-1 uk-flex uk-flex-center uk-flex-middle">
+      <div class="uk-width-1-1@s uk-width-3-4@m uk-padding">
+        <div>
+          <div class="dropbox uk-flex uk-flex-middle uk-flex-center">
+            <input type="file" name="filename"
+                   @change="filesChange($event.target.name, $event.target.files); 1"
+                   accept=".ini,.txt" class="input-file">
+            <p>
+              Drag your <b>Joomla! language file</b> here to begin<br> or click to browse
+            </p>
           </div>
+
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -36,8 +30,8 @@ export default {
     filesChange(name, files) {
       if (files.length > 0) {
         let file = files[0];
-        if (['ini','txt'].includes(this.getExtension(file))) {
-          this.$emit('file-changed',file);
+        if (['ini', 'txt'].includes(this.getExtension(file))) {
+          this.$emit('file-changed', file);
         } else {
           alert("Please select a valid file");
         }

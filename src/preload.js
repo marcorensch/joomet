@@ -8,7 +8,7 @@ const ipc = {
         // From main to render.
         'receive': ['DEEPL_STATUS', 'DEEPL_ERROR','GET_SETTINGS','SETTINGS_SAVED'],
         // From render to main and back again.
-        'sendReceive': ['GET_SETTINGS','REMOVE_ITEM','SAVE_SETTINGS', 'LOADED','INV_READ_FILE', 'INV_GET_LANGUAGES']
+        'sendReceive': ['CHECK_API_KEY','GET_SETTINGS','DELETE_SETTINGS','SAVE_SETTINGS', 'LOADED','INV_READ_FILE', 'INV_GET_LANGUAGES']
     }
 };
 

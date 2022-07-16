@@ -16,7 +16,7 @@
                   </div>
                   <div class="uk-width-auto">
                     <div class="uk-position-relative">
-                      <div class="uk-button nx-button-default">Select
+                      <div class="uk-button nx-button-default nx-button-select">Select
                         <input type="file" accept=".txt,.ini" class="uk-position-cover" style="opacity: 0" @change="filesChange($event.target.name, $event.target.files); 1">
                       </div>
                     </div>
@@ -24,8 +24,32 @@
                 </div>
               </div>
             </div>
-            <SelectField id="srcLng" label="Source Language" />
-            <SelectField id="trgLng" label="Target Language" />
+            <MessageContainer v-if="keyError||settingsError" :message="errorMessage" :clickTarget="'Settings'"
+                              :container-classes="'uk-form-controls uk-margin uk-animation-slide-top-small'"
+                              :alert-classes="'uk-alert uk-alert-danger uk-text-center'"
+            />
+            <SelectField :label="'Source Language'"
+                         :id="'sourceLanguage'"
+                         :required="'true'"
+                         :manualOption="{value:'AUTO',label:'Auto Detect'}"
+                         :options="languages"
+                         :selected="settings.sourceLanguage"
+                         :disabled="disabled"
+                         @valueChanged="handleValueChange"/>
+            <SelectField :label="'Target Language'"
+                         :id="'targetLanguage'"
+                         :required="'true'"
+                         :options="languages"
+                         :selected="settings.targetLanguage"
+                         :disabled="disabled"
+                         @valueChanged="handleValueChange"/>
+            <div class="uk-margin">
+              <div class="uk-flex uk-flex-right uk-grid-small">
+                <div>
+                  <button class="uk-button uk-button-success" :class="{'uk-disabled':disabled}" @click="startTranslation">Start Translation</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <Upload v-else @file-changed="handleFileChanged" />
@@ -38,6 +62,7 @@
 import ViewTitle from "@/components/ViewTitle";
 import SelectField from "@/components/fields/selectField";
 import {useFileStore} from "@/stores/file";
+import MessageContainer from "@/components/MessageContainer";
 
 import Upload from "@/components/layouts/Upload";
 
@@ -47,16 +72,59 @@ export default {
     Upload,
     ViewTitle,
     SelectField,
+    MessageContainer
   },
   data() {
     return {
       store : useFileStore(),
-      srcLng: '',
-      trgLng: '',
+      settings: {
+        key: '',
+        sourceLanguage: 'EN',
+        targetLanguage: 'DE',
+      },
+      sourceLanguage: '',
+      targetLanguage: '',
+      languages: [],
+      keyError: false,
+      deeplApiErrorText: '',
+      errorMessage: '',
+      settingsError: false,
+      linkMessageTo: null,
+      disabled: true,
     };
   },
   mounted() {
+    // Get Settings
+    window.ipcRenderer.invoke('GET_SETTINGS').then((settings) => {
+      if(settings){
+        this.settingsError = false;
+        for (let [key, value] of Object.entries(settings)) {
+          this.settings[key] = value;
+        }
+        // Set selected languages based on settings (prefered)
+        this.sourceLanguage = this.settings.sourceLanguage;
+        this.targetLanguage = this.settings.targetLanguage;
 
+      }else{
+        this.settingsError = true;
+        this.disabled = true;
+        this.errorMessage = 'Please open Settings to set your API key.';
+        this.linkMessageTo = 'Settings';
+      }
+    }).then(() => {
+      // Check Key
+      window.ipcRenderer.invoke('CHECK_API_KEY').then((status) => {
+        if(status.valid){
+          this.getLanguages();
+          this.disabled = false;
+        }else{
+          this.keyError = true;
+          this.disabled = true;
+          this.errorMessage = `<p>Please check your API key in Settings and try again.<br>${status.error}</p>`;
+          this.linkMessageTo = 'Settings';
+        }
+      });
+    });
   },
   methods: {
     filesChange(name, files) {
@@ -73,10 +141,29 @@ export default {
     handleFileChanged(file) {
       this.store.file = file;
     },
+    handleMessageClicked(target, message) {
+      console.log(target, message)
+    },
     getExtension(file) {
       return file.name.split('.').pop().toLowerCase();
-    }
+    },
+    async getLanguages() {
+      const languages = await window.ipcRenderer.invoke('INV_GET_LANGUAGES');
+      this.languages = languages.map(lng => {
+        return {
+          label: lng.name,
+          value: lng.code
+        }
+      });
+    },
+    handleValueChange(value, target) {
+      this[target] = value;
+    },
+    startTranslation(){
+      console.log('start translation clicked')
+    },
   },
+
 }
 </script>
 
