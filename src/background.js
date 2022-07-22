@@ -20,6 +20,11 @@ const fileHelper = new FileHelper();
 const Store = require('electron-store');
 const store = new Store();
 
+// Database
+import DBLayer from "@/db.mjs";
+const db = new DBLayer(app.getPath("userData"));
+db.createTable('statistics')
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 console.log(app.getPath('userData'));
@@ -65,10 +70,8 @@ async function createWindow() {
         return {action: 'deny'};
     });
 
-
     // win.webContents.send('tests', {'Hello There': 'General Kenobi'});
 }
-
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
