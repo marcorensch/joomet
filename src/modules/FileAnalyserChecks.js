@@ -1,11 +1,22 @@
-import {KeyChecker, ValueChecker, CheckResult} from './Checks.mjs'
+import {KeyChecker, ValueChecker, FilenameChecker, CheckResult} from './Checks.mjs'
 import {Row, RowCheck} from './Row.mjs'
 
 class Checker {
 
-    constructor(fileContent) {
+    constructor(fileContent, file) {
+        this.file = file
         this.fileContent = fileContent
         this.languageKeys = []
+    }
+
+    /**
+     * @description Einstiegspunkt zur Prüfung des Dateinamen
+     *
+     * @author Marco Rensch
+     * @returns {CheckResult}
+     */
+    checkFileName(){
+        return FilenameChecker.checkFilenameFormat(this.file.name)
     }
 
     /**
@@ -14,7 +25,7 @@ class Checker {
      *
      * @param rows  Array von Strings
      * @return  Array von { Row, RowChecks }
-     * @author Marco
+     * @author Marco Rensch
      */
     checkRows() {
         // Checker Result only contains ROW items of rows with errors
@@ -37,7 +48,7 @@ class Checker {
      * @description Einstiegspunkt zur überprüfung eines Row Objekts
      *
      * @param   row     Row Object
-     * @author Marco
+     * @author Marco Rensch
      */
     checkRow(row) {
         let keyChecks, valueChecks, formatChecks;
@@ -62,7 +73,6 @@ class Checker {
         } else {
             let [checkDuplicates, languageKeys] = KeyChecker.checkDuplicates(row.key, row.rowNum, this.languageKeys)
             this.languageKeys = languageKeys
-            console.log(this.languageKeys)
             keyChecks = {
                 string: row.key, // SCHLUESSEL
                 checks: {
@@ -84,6 +94,14 @@ class Checker {
         return new RowCheck(formatChecks, keyChecks, valueChecks)
     }
 
+    /**
+     * @description Gibt ein Array von CheckResult Objekten zurück, die Fehler enthalten.
+     *
+     * @param rowChecks
+     * @param rowNum
+     * @author Marco Rensch
+     * @returns {[]}
+     */
     getFails(rowChecks, rowNum) {
         let arrayOfErrors = []
         // Loop over Objects and build overal status

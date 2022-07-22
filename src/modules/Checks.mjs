@@ -1,3 +1,15 @@
+class FilenameChecker{
+    static checkFilenameFormat(filename){
+        if(!filename){
+            return new CheckResult(false,'filename', 'Filename not checked','The filename could not be checked!')
+        }
+        let s = /([a-z]{2}-[A-Z]{2}.)?(plg|mod|com)_[a-z_]+(.sys)?.ini/.test(filename);
+        let m = s? "": "filename looks invalid";
+        let h = s? "": 'The correct format for language files as noted in the documentations has this format: <code>lng-LNG</code>.<code>plg|mod|com</code>_<code>extension_name</code>_<code>(.sys)</code>.ini<br>examples:<br><code>en-GB.mod_extension.ini</code><br><code>fr-FR.plg_extension_name.sys.ini</code><br>or without language tag: <code>mod_extension_name.ini</code>';
+        return new CheckResult(s,'filename', m,h)
+    }
+}
+
 class KeyChecker{
     /* See https://regex101.com/ for testing regular expressions */
 
@@ -11,7 +23,7 @@ class KeyChecker{
         let s = string.toUpperCase() === string && string !== string.toLowerCase()
         let m = s ? '':"lowercase character(s) found"
         let h = s ? '':`Key Values needs to be all in uppercase<br>Good: <code>KEY_FOR_STRING</code><br>Bad: <code>Key_for_String</code>`
-        return new CheckResult(s,'key',m,h)
+        return new CheckResult(s,'key',m,h, true)
     }
 
     /**
@@ -24,7 +36,7 @@ class KeyChecker{
         let s = /^[_A-Z\d]+$/i.test(string)
         let m = s ? '':"Invalid characters found"
         let h = s ? '':'Key values may only contain the characters A-Z 0-9 or _ (underscore), Spaces are not allowed'
-        return new CheckResult(s,'key',m,h)
+        return new CheckResult(s,'key',m,h, true)
     }
 
     static checkDuplicates(keyToCheck, row, keysArr){
@@ -62,7 +74,7 @@ class ValueChecker{
         string = string.trim()
         let s = !/(?<!\\)"/.test(string.slice(1, -1));
         let m = s ? '':'Unescaped Double Quotes found'
-        let h = s ? '':`Double quotes in value strings must be escaped by backslashs<br>Good:<div class=\\"foo\\">foo</div><br>Bad: <div class="foo">foo</div>`
+        let h = s ? '':`Double quotes in value strings must be escaped by backslashs<br>Good: <code>&lt;div class=\\"foo\\"&gt;foo&lt;/div&gt;</code><br>Bad: <code>&lt;div class="foo"&gt;foo&lt;/div&gt;</code>`
         return new CheckResult(s,'value',m,h)
     }
 
@@ -98,7 +110,8 @@ class ValueChecker{
  * Wrapper Klasse als zukünftiger Layer für Modularisierung
  */
 class CheckResult {
-    constructor(status, type, message, help) {
+    constructor(status, type, message, help, html = false, ) {
+        this.renderHtml = html
         this.status = status;
         this.type = type;
         this.message = message;
@@ -106,4 +119,4 @@ class CheckResult {
     }
 }
 
-export {KeyChecker, ValueChecker, CheckResult}
+export {KeyChecker, ValueChecker, FilenameChecker, CheckResult}

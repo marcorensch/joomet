@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "description": "vue 3.x with UIkit & Electron",
-  "main": "background.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "tests": "mocha tests/Tests.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",

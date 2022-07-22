@@ -4,11 +4,11 @@ import { contextBridge, ipcRenderer } from 'electron'
 const ipc = {
     'render': {
         // From render to main.
-        'send': ['GET_DEEPL_STATUS','SAVE_SETTINGS','GET_SETTINGS'],
+        'send': ['GET_DEEPL_STATUS','SAVE_SETTINGS','GET_SETTINGS','CANCEL_TRANSLATION'],
         // From main to render.
-        'receive': ['DEEPL_STATUS', 'DEEPL_ERROR','GET_SETTINGS','SETTINGS_SAVED'],
+        'receive': ['DEEPL_STATUS', 'DEEPL_ERROR','GET_SETTINGS','SETTINGS_SAVED', 'TRANSLATOR-PROGRESS'],
         // From render to main and back again.
-        'sendReceive': ['CHECK_API_KEY','GET_SETTINGS','DELETE_SETTINGS','SAVE_SETTINGS', 'LOADED','INV_READ_FILE', 'INV_GET_LANGUAGES']
+        'sendReceive': ['CHECK_API_KEY','GET_SETTINGS','DELETE_SETTINGS','SAVE_SETTINGS', 'LOADED','INV_READ_FILE', 'INV_GET_LANGUAGES', 'TRANSLATE']
     }
 };
 
@@ -37,6 +37,9 @@ const exposedAPI = {
     },
     removeAllListeners: () => {
         ipcRenderer.removeAllListeners()
+    },
+    removeAllChannelListener: (channel) => {
+        ipcRenderer.removeAllListeners(channel)
     }
 }
 // Expose ipcRenderer to the client

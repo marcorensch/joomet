@@ -75,6 +75,13 @@ a:not(.external-link), button:not(.external-link){
   background-color: #221d27;
 }
 
+.nx-footer-container{
+  background-color: #252328;
+  border-top:1px solid #1a191c;
+  padding:5px 25px;
+  overflow-x: scroll;
+}
+
 .medium-icon{
   font-size: 1.4em;
 }

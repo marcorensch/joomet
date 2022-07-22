@@ -3,13 +3,14 @@
 import * as path from "path";
 import fs from "fs";
 
-import {app, protocol, BrowserWindow, ipcMain, shell} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain, shell, dialog} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 
-import {Checker} from "@/classes/FileAnalyserChecks";
+import {Checker} from "@/modules/FileAnalyserChecks";
+import FileHelper from "@/modules/FileHelper.mjs";
 import * as deepl from 'deepl-node';
-import FileHelper from "@/classes/FileHelper.mjs";
+import TranslatorWrapper from "@/modules/TranslatorWrapper";
 
 const fileHelper = new FileHelper();
 
@@ -26,9 +27,11 @@ const allowedFileTypesForCheck = ['.ini', '.txt']
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}])
 
+let mainWindow;
+
 async function createWindow() {
     // Create the browser window.
-    const win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         titleBarStyle: 'hidden',
         icon: path.resolve(__static, 'icon.png'),
         width: 1600, height: 600, minWidth: 800, minHeight: 500, webPreferences: {
@@ -43,19 +46,19 @@ async function createWindow() {
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
-        await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-        if (!process.env.IS_TEST) win.webContents.openDevTools()
+        await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+        if (!process.env.IS_TEST) mainWindow.webContents.openDevTools()
     } else {
         createProtocol('app')
         // Load the index.html when not in development
-        win.loadURL('app://./index.html')
+        mainWindow.loadURL('app://./index.html')
 
     }
 
-    win.webContents.send('tests-backend-init', "sent from backend");
+    mainWindow.webContents.send('tests-backend-init', "sent from backend");
 
     // opens all "_blank" targets in default browser!
-    win.webContents.setWindowOpenHandler(({url}) => {
+    mainWindow.webContents.setWindowOpenHandler(({url}) => {
         shell.openExternal(url);
         return {action: 'deny'};
     });
@@ -124,11 +127,12 @@ ipcMain.handle('INV_READ_FILE',(event, file)=>{
             let fileStats = fileHelper.getFileDetails(fileContentArray)
 
             // The Checker
-            let checker = new Checker(fileContentArray);
-            let result = checker.checkRows();
-            fileStats.problems = result.checkerResults.length
+            let checker = new Checker(fileContentArray, file);
+            let fileNameCheck = checker.checkFileName();
+            let rowsCheckResults = checker.checkRows();
+            fileStats.problems = rowsCheckResults.checkerResults.length
 
-            return {fileStats, result}
+            return {fileStats, rowsCheckResults, fileNameCheck}
         } else {
             throw `File: "${file.name}" has no valid Filetype`
         }
@@ -153,14 +157,7 @@ ipcMain.handle('CHECK_API_KEY', async (event) => {
 })
 
 ipcMain.handle('INV_GET_LANGUAGES',async(e)=>{
-    // const settings = store.get('settings')
-    // if(settings.key){
-    //     const translator = new deepl.Translator(settings.key);
-    //     return await translator.getSourceLanguages();
-    // }
-
     return store.get('languages');
-
 })
 
 ipcMain.handle('GET_SETTINGS',(e)=>{
@@ -168,7 +165,6 @@ ipcMain.handle('GET_SETTINGS',(e)=>{
 })
 
 ipcMain.handle('SAVE_SETTINGS',async(event,settings)=> {
-    console.log(settings)
     store.set('settings', settings)
     //Update Languages cache:
     if(settings.key){
@@ -186,7 +182,6 @@ ipcMain.handle('DELETE_SETTINGS',(e)=>{
 })
 
 ipcMain.on('GET_DEEPL_STATUS', async (event, args) => {
-    console.log(args);
     try{
         const translator = new deepl.Translator(args.key)
         const usage = await translator.getUsage();
@@ -205,3 +200,31 @@ ipcMain.on('SAVE_SETTINGS', async (event, args) => {
         event.sender.send('SETTINGS_ERROR', {error})
     }
 });
+
+ipcMain.handle('TRANSLATE',async (e,args)=>{
+    const dt = new deepl.Translator(store.get('settings').key);
+    let translatorWrapper = new TranslatorWrapper(dt);
+    try {
+        let optionalName = fileHelper.buildNewFileName(args.fileName, args.sourceLanguage, args.targetLanguage)
+
+        // Define the exported File:
+        let filename = await dialog.showSaveDialog(mainWindow, {
+                title: 'Save Translated File',
+                defaultPath: path.join(app.getPath('desktop'), optionalName),
+                filters: [{name: 'INI File', extensions: ['ini']}]
+            });
+        let data = await translatorWrapper.translateFile(args.sourceLanguage, args.targetLanguage, args.filePath, mainWindow)
+        if(data && !filename.canceled){
+            try {
+                fileHelper.writeToFile(filename.filePath, fileHelper.prepareDataForNewFile(data))
+            } catch (error) {
+                e.sender.send('ERROR', {error})
+            }
+        }
+
+        return data;
+    }catch (error) {
+        e.sender.send('DEEPL_ERROR', {error})
+    }
+
+})

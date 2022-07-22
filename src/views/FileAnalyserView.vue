@@ -5,7 +5,7 @@
         <component v-if="store.file" :is="slot_component" />
       </ViewTitle>
       <div v-if="store.file" class="uk-position-bottom uk-position-z-index">
-        <div class="uk-text-meta uk-text-small file-stats">
+        <div class="uk-text-meta uk-text-small file-stats nx-footer-container">
           <div class="uk-child-width-auto uk-grid-small stats-grid" uk-grid>
             <div>
               <font-awesome-icon icon="chart-line" />
@@ -46,6 +46,7 @@
         <div class="uk-position-cover uk-overflow-auto">
           <table id="table-content" class="uk-table uk-table-striped uk-table-hover uk-table-middle uk-table-small uk-margin-large-bottom">
             <tbody>
+            <AnalyserRow v-if="fileData.fileNameCheck && !fileData.fileNameCheck.check.status" :row="fileData.fileNameCheck" :item-index="0"/>
             <AnalyserRow v-for="(item, index) of fileData.checkerResults" :key="index" :row="item" :item-index="index"/>
             </tbody>
           </table>
@@ -93,13 +94,20 @@ export default {
       this.store.file = file;
       this.fileStats.file = file;
       const data = await window.ipcRenderer.invoke('INV_READ_FILE', {path:file.path, name:file.name});
-      console.log(data);
       // Statistics
       for(const [key, value] of Object.entries(data.fileStats)){
         this.fileStats[key] = value;
       }
+
       // Problems Table
-      this.fileData = data.result;
+      this.fileData = data.rowsCheckResults;
+      this.fileData.fileNameCheck = {
+        string : file.name
+      };
+      this.fileData.fileNameCheck.check = data.fileNameCheck;
+
+      console.log(this.fileData);
+
     },
   },
 }
@@ -108,12 +116,6 @@ export default {
 <style scoped>
 #table-header {
   margin: 0 !important;
-}
-.file-stats{
-  background-color: #252328;
-  border-top:1px solid #1a191c;
-  padding:5px 25px;
-  overflow-x: scroll;
 }
 .stats-grid > div:not(:last-of-type):not(:first-of-type)::after {
   content: "|";

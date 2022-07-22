@@ -26,29 +26,44 @@
         </div>
       </ul>
     </div>
-    <div class="uk-position-bottom-left">
-      <div class=" uk-padding-small">
-        <router-link :to="{name: 'Settings'}"><span uk-icon="icon: cog; ratio: .8"></span></router-link>
+    <div class="uk-position-bottom">
+      <div class="uk-padding-small">
+        <div class="uk-grid uk-grid-small uk-child-width-expand uk-flex uk-flex-bottom" uk-grid>
+          <div class="uk-text-left">
+            <router-link :to="{name: 'Settings'}"><span uk-icon="icon: cog; ratio: .8"></span></router-link>
+          </div>
+          <div class="uk-text-center">
+            <OnlineStatusIndicator />
+          </div>
+          <div v-if="appInfo.appVersion" class="uk-text-right">
+            <div class="nx-text-xsmall uk-text-meta">
+              v{{appInfo.appVersion}}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div v-if="appInfo.appVersion" class="uk-position-bottom-right">
-      <div class=" uk-padding-small nx-text-xsmall uk-text-meta">
-        v{{appInfo.appVersion}}
-      </div>
-    </div>
+
   </div>
 </template>
 
 <script>
+import OnlineStatusIndicator from "@/components/OnlineStatusIndicator";
 export default {
   name: "Sidebar",
+  components: {OnlineStatusIndicator},
   props:{
     appInfo:{
       type: Object,
       default: () => ({}),
     },
   },
+  data() {
+    return {
+    }
+  },
   mounted() {
+
   },
   methods: {
     subIsActive(input) {
@@ -56,7 +71,8 @@ export default {
       return paths.some(path => {
         return this.$route.path.indexOf(path) === 0 // current path starts with this path string
       })
-    }
+    },
+
   }
 }
 </script>

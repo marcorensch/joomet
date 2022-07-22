@@ -13,7 +13,7 @@
       <div class="uk-modal-body">
         <table class="uk-table uk-table-small uk-table-middle uk-table-justify uk-table-divider">
           <tbody>
-          <tr>
+          <tr v-if="row.rowNum">
             <td class="uk-width-1-6"><strong>Row</strong></td>
             <td>{{ row.rowNum }}</td>
           </tr>
@@ -21,7 +21,8 @@
             <td><strong>String</strong></td>
             <td>
               <div class="string-with-error-container">
-                <div class="string-with-error" v-html="string"></div>
+                <div v-if="row.check.renderHtml" class="string-with-error html" v-html="string"></div>
+                <div v-else class="string-with-error">{{ string }}</div>
               </div>
             </td>
           </tr>
@@ -63,8 +64,7 @@ export default {
     },
   },
   mounted() {
-    console.log(this.row)
-    this.string = this.row.check.type === 'key' ? this.splitKey(this.row.string) : this.row.string;
+    this.string = this.row.check.type === 'key' && this.row.check.renderHtml ? this.splitKey(this.row.string) : this.row.string;
   },
   methods: {
     splitKey(string){

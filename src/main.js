@@ -5,24 +5,29 @@ import { createPinia } from 'pinia'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
-    faUserSecret,
-    faBuilding,
     faBarsProgress,
     faGrip,
     faRotate,
     faPlusCircle,
     faFolder,
-    faFolderTree,
-    faFolderPlus,
     faChevronLeft,
     faChevronRight,
     faChevronUp,
     faChevronDown,
-    faFileCircleCheck, faBars, faTrashCan, faCircleXmark, faLanguage, faFile, faTriangleExclamation, faChartLine
+    faFileCircleCheck,
+    faBars,
+    faTrashCan,
+    faCircleXmark,
+    faLanguage,
+    faFile,
+    faTriangleExclamation,
+    faChartLine,
+    faSave,
+    faWifi
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faUserSecret, faBuilding, faBarsProgress, faGrip, faRotate, faPlusCircle, faCircleXmark, faFolder, faFolderTree, faFolderPlus, faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faFileCircleCheck, faBars, faTrashCan, faLanguage, faFile, faTriangleExclamation, faChartLine)
+library.add( faWifi, faSave, faBarsProgress, faGrip, faRotate, faPlusCircle, faCircleXmark, faFolder, faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faFileCircleCheck, faBars, faTrashCan, faLanguage, faFile, faTriangleExclamation, faChartLine)
 
 createApp(App)
     .component('font-awesome-icon', FontAwesomeIcon)
