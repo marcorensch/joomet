@@ -118,18 +118,14 @@ if (isDevelopment) {
 
 /* IPC */
 ipcMain.handle("LOADED", async (event) => {
-    // const updateStatus = await updater.checkForUpdates();
-    // console.log(updateStatus)
     let updateStatus = await fetch('https://update.nx-designs.ch/apps/JLanguageCT/update.json')
         .then(res => res.json()).then((json) =>{
-            console.log(json.versions[0].version)
            return {
                hasUpdate: compareVersions(json.versions[0].version, app.getVersion()),
                version: json.versions[0].version,
                url: json.versions[0].url
            }
         }).catch((e) => {
-            console.log(e)
             return {
                 hasUpdate: 0,
                 version: app.getVersion(),
