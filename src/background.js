@@ -5,7 +5,9 @@ import fs from "fs";
 
 import {app, protocol, BrowserWindow, ipcMain, shell, dialog} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
+import fetch from 'electron-fetch'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
+import compareVersions from "compare-versions";
 
 import {Checker} from "@/modules/FileAnalyserChecks";
 import FileHelper from "@/modules/FileHelper.mjs";
@@ -115,8 +117,27 @@ if (isDevelopment) {
 }
 
 /* IPC */
-ipcMain.handle("LOADED", (event) => {
-    return {appVersion: app.getVersion()};
+ipcMain.handle("LOADED", async (event) => {
+    // const updateStatus = await updater.checkForUpdates();
+    // console.log(updateStatus)
+    let updateStatus = await fetch('https://update.nx-designs.ch/apps/JLanguageCT/update.json')
+        .then(res => res.json()).then((json) =>{
+            console.log(json.versions[0].version)
+           return {
+               hasUpdate: compareVersions(json.versions[0].version, app.getVersion()),
+               version: json.versions[0].version,
+               url: json.versions[0].url
+           }
+        }).catch((e) => {
+            console.log(e)
+            return {
+                hasUpdate: 0,
+                version: app.getVersion(),
+                url: ""
+            }
+        });
+    console.log(updateStatus)
+    return {appVersion: app.getVersion(), updateStatus};
 })
 
 ipcMain.handle('INV_READ_FILE',(event, file)=>{
@@ -181,11 +202,10 @@ ipcMain.handle('DELETE_SETTINGS',(e)=>{
     store.delete('settings')
 })
 
-ipcMain.on('GET_DEEPL_STATUS', async (event, args) => {
+ipcMain.handle('DEEPL_STATUS', async (event, args) => {
     try{
         const translator = new deepl.Translator(args.key)
-        const usage = await translator.getUsage();
-        event.sender.send('DEEPL_STATUS', usage)
+        return await translator.getUsage();
     }catch(error){
         event.sender.send('DEEPL_ERROR', {error})
     }

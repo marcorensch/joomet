@@ -27,6 +27,11 @@
       </ul>
     </div>
     <div class="uk-position-bottom">
+      <div v-if="appInfo.updateStatus.hasUpdate" class="uk-animation-slide-bottom">
+        <a class="external-link nx-update-notification uk-width-1-1" target="_blank" :href="appInfo.updateStatus.url" title="More Information">
+          Update available
+        </a>
+      </div>
       <div class="uk-padding-small">
         <div class="uk-grid uk-grid-small uk-child-width-expand uk-flex uk-flex-bottom" uk-grid>
           <div class="uk-text-left">
@@ -123,6 +128,22 @@ hr.nx-hr {
   border-bottom: 1px solid #2d2a30 !important;
   width: calc(100% + 40px);
   margin-left:-20px;
+}
+a.nx-update-notification {
+  display: block;
+  padding-top: .4em;
+  padding-bottom: .2em;
+  font-size: .7em;
+  background: rgba(37, 35, 40, 0.98);
+  box-shadow: inset 0 4px 6px -3px rgba(0,0,0,1);
+  border-bottom: 1px solid #2c2a32;
+  transition: all .2s ease-in-out;
+}
+
+a.nx-update-notification:hover {
+  background: #0097fe;
+  text-decoration: none;
+  transition: all .2s ease-in-out;
 }
 
 </style>

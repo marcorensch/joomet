@@ -25,13 +25,16 @@
     data() {
       return {
         appInfo: {
-          appVersion: null
+          appVersion: null,
+          updateStatus: {},
         }
       }
     },
     mounted() {
       window.ipcRenderer.invoke('LOADED','').then((result) => {
+        result.updateStatus.hasUpdate = result.updateStatus.hasUpdate === 1;
         this.appInfo = result
+        console.log(this.appInfo)
       })
       this.$router.push('/')
     },

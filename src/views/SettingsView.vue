@@ -3,9 +3,17 @@
     <ViewTitle title="Settings"/>
     <div class="uk-position-relative" uk-height-viewport="offset-top:true">
       <div class="uk-position-cover uk-overflow-auto">
+        <div v-if="!onlineStatus.online" class="uk-padding uk-padding-remove-bottom">
+          <div class="uk-alert uk-alert-danger">
+              <h4><font-awesome-icon icon="exclamation-triangle" /> You are offline</h4>
+              <p>
+                The application is currently running in offline mode. Some features may not be available.
+              </p>
+          </div>
+        </div>
         <div class="uk-width-1-1 uk-padding uk-flex uk-flex-center">
           <form class="uk-form uk-form-horizontal uk-text-left uk-width-1-1 uk-width-4-5@l">
-            <div class="nx-container">
+            <div v-if="settings.key && charsLimit" id="deepl-key-status-container" class="nx-container uk-animation-slide-top-medium">
               <h3 class="uk-h4">DeepL API Usage Statistics</h3>
               <table class="uk-table uk-table-justify uk-table-small uk-margin-remove-bottom">
                 <tbody>
@@ -34,13 +42,14 @@
               </table>
               <div class="uk-flex uk-flex-right">
                 <div>
-                  <button class="uk-button nx-button-default" @click="getDeeplUsage">Update Usage Information</button>
+                  <button class="uk-button nx-button-default" :class="{'uk-disabled': !onlineStatus.online}" @click="getDeeplUsage">Update Usage Information</button>
                 </div>
               </div>
             </div>
             <div class="uk-margin-top">
               <InputField :label="'DeepL API Key'" :id="'key'" :required="'true'" @valueChanged="handleValueChange"
                           v-model="settings.key"/>
+              <p><a class="external-link" href="https://www.deepl.com/pro-api" target="_blank"><font-awesome-icon icon="external-link-alt" /> Get your API Key</a></p>
 
               <MessageContainer v-if="keyError" :message="errorMessage"
                                 :container-classes="'uk-form-controls uk-margin uk-animation-slide-top-small'"
@@ -82,11 +91,14 @@ import InputField from "@/components/fields/inputField";
 import SelectField from "@/components/fields/selectField";
 import MessageContainer from "@/components/MessageContainer";
 
+import {useOnlineStatus} from "@/stores/online";
+
 export default {
   name: "SettingsView",
   components: {MessageContainer, InputField, SelectField, ViewTitle},
   data() {
     return {
+      onlineStatus: useOnlineStatus(),
       charsLimit: 0,
       charsCount: 0,
       charsPercentage: 0,
@@ -106,25 +118,7 @@ export default {
     window.ipcRenderer.removeAllListeners();
   },
   mounted() {
-    // Get Settings
-    window.ipcRenderer.invoke('GET_SETTINGS').then((settings) => {
-      if (settings) {
-        for (let [key, value] of Object.entries(settings)) {
-          this.settings[key] = value;
-        }
-        this.getDeeplUsage(null);
-        this.getLanguages();
-      }
-    });
-
-    window.ipcRenderer.receive('DEEPL_STATUS', (data) => {
-      this.charsLimit = data.character.limit;
-      this.charsCount = data.character.count;
-      if (this.charsCount > 0) {
-        this.charsPercentage = Math.ceil(100 * this.charsCount / this.charsLimit) < 100 ? Math.ceil(100 * this.charsCount / this.charsLimit) : 100;
-      }
-      this.animateProgressBar();
-    })
+    this.getSettings();
 
     window.ipcRenderer.receive('DEEPL_ERROR', (data) => {
       this.keyError = true;
@@ -135,6 +129,19 @@ export default {
 
   },
   methods: {
+    getSettings(){
+      window.ipcRenderer.invoke('GET_SETTINGS').then((settings) => {
+        if (settings) {
+          for (let [key, value] of Object.entries(settings)) {
+            this.settings[key] = value;
+          }
+          if (this.onlineStatus.online) {
+            this.getDeeplUsage(null);
+            this.getLanguages();
+          }
+        }
+      });
+    },
     animateProgressBar() {
       let value = 0;
       let max = this.charsPercentage;
@@ -159,7 +166,16 @@ export default {
     },
     getDeeplUsage(e) {
       if (e) e.preventDefault();
-      if (this.settings.key) window.ipcRenderer.send('GET_DEEPL_STATUS', {key: this.settings.key});
+      if (this.settings.key) {
+        window.ipcRenderer.invoke('DEEPL_STATUS', {key: this.settings.key}).then((data) => {
+          this.charsLimit = data.character.limit;
+          this.charsCount = data.character.count;
+          if (this.charsCount > 0) {
+            this.charsPercentage = Math.ceil(100 * this.charsCount / this.charsLimit) < 100 ? Math.ceil(100 * this.charsCount / this.charsLimit) : 100;
+          }
+          this.animateProgressBar();
+        });
+      }
     },
     async getLanguages() {
       const languages = await window.ipcRenderer.invoke('INV_GET_LANGUAGES');
@@ -179,8 +195,12 @@ export default {
         targetLanguage: this.settings.targetLanguage,
       }).then(() => {
         if (!this.keyError) {
-          this.getDeeplUsage(null);
-          this.getLanguages();
+          if(this.onlineStatus.online) {
+            this.getDeeplUsage(null);
+            this.getLanguages();
+          }else{
+            // Key entered but offline
+          }
         }
       });
     },
