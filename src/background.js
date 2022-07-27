@@ -16,6 +16,14 @@ import TranslatorWrapper from "@/modules/TranslatorWrapper";
 
 const fileHelper = new FileHelper();
 
+// Logger
+const log = require('electron-log');
+log.transports.file.resolvePath = () =>{ return path.join(app.getPath('userData'), 'logs/app.log'); };
+
+console.log(app.getPath('userData'))
+
+log.info("Starting App" );
+
 // User Settings
 const Store = require('electron-store');
 const store = new Store();
@@ -23,11 +31,10 @@ const store = new Store();
 // Database
 import DBLayer from "@/db.mjs";
 const db = new DBLayer(app.getPath("userData"));
-db.createTable('statistics')
+db.createTables()   // Creates the necessary tables if not already exists
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-console.log(app.getPath('userData'));
 
 const allowedFileTypesForCheck = ['.ini', '.txt']
 
@@ -121,14 +128,16 @@ if (isDevelopment) {
 
 /* IPC */
 ipcMain.handle("LOADED", async (event) => {
-    let updateStatus = await fetch('https://update.nx-designs.ch/apps/JLanguageCT/update.json')
+    let updateStatus = await fetch('https://update.nx-designs.ch/apps/veltj/update.json')
         .then(res => res.json()).then((json) =>{
+            log.info("Latest Version: " + json.versions[0].version);
            return {
                hasUpdate: compareVersions(json.versions[0].version, app.getVersion()),
                version: json.versions[0].version,
                url: json.versions[0].url
            }
         }).catch((e) => {
+            log.error("Error while checking for updates: " + e);
             return {
                 hasUpdate: 0,
                 version: app.getVersion(),
@@ -152,11 +161,16 @@ ipcMain.handle('INV_READ_FILE',(event, file)=>{
             let rowsCheckResults = checker.checkRows();
             fileStats.problems = rowsCheckResults.checkerResults.length
 
+            // Write to stats DB
+            db.insertFileCheckStats(fileStats, file.name)
+
             return {fileStats, rowsCheckResults, fileNameCheck}
         } else {
+            log.error("Filetype not allowed: " + path.extname(file.path));
             throw `File: "${file.name}" has no valid Filetype`
         }
     } else {
+        log.error(`File: "${file.name}" not found in ${file.path} or not accessible`);
         throw `File: "${file.name}" not found in ${file.path} or not accessible`
     }
 })
@@ -169,6 +183,7 @@ ipcMain.handle('CHECK_API_KEY', async (event) => {
             const usage = await translator.getUsage();
             return {valid: true, usage}
         }catch(error){
+            log.error(error)
             return {valid: false, error}
         }
     } else {
@@ -191,13 +206,16 @@ ipcMain.handle('SAVE_SETTINGS',async(event,settings)=> {
         const translator = new deepl.Translator(settings.key);
         try {
             store.set('languages', await translator.getSourceLanguages())
+            log.info("Languages cache updated")
         } catch (error) {
+            log.error('DEEPL Error: ' + error)
             event.sender.send('DEEPL_ERROR', {error})
         }
     }
 })
 
 ipcMain.handle('DELETE_SETTINGS',(e)=>{
+    log.info("Settings deleted")
     store.delete('settings')
 })
 
@@ -206,6 +224,7 @@ ipcMain.handle('DEEPL_STATUS', async (event, args) => {
         const translator = new deepl.Translator(args.key)
         return await translator.getUsage();
     }catch(error){
+        log.error("DEEPL STATUS ERROR: " + error)
         event.sender.send('DEEPL_ERROR', {error})
     }
 });
@@ -213,9 +232,10 @@ ipcMain.handle('DEEPL_STATUS', async (event, args) => {
 ipcMain.on('SAVE_SETTINGS', async (event, args) => {
     try{
         store.set('settings', args)
+        log.info("Settings saved")
         event.sender.send('SETTINGS_SAVED', store.get('settings'))
     }catch(error){
-        console.log(error)
+        log.error("SAVE SETTINGS ERROR: " + error)
         event.sender.send('SETTINGS_ERROR', {error})
     }
 });
@@ -236,13 +256,16 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
         if(data && !filename.canceled){
             try {
                 fileHelper.writeToFile(filename.filePath, fileHelper.prepareDataForNewFile(data))
+                log.info("File saved " + filename.filePath)
             } catch (error) {
+                log.error("Error while writing to file: " + error)
                 e.sender.send('ERROR', {error})
             }
         }
 
         return data;
     }catch (error) {
+        log.error("TRANSLATE ERROR: " + error)
         e.sender.send('DEEPL_ERROR', {error})
     }
 
