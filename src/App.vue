@@ -100,6 +100,10 @@ a:not(.external-link), button:not(.external-link){
   border-bottom:2px solid #1a191c;
 }
 
+.nx-text-small{
+  font-size: .8em;
+}
+
 .nx-text-xsmall{
   font-size: .6em;
 }

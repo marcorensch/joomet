@@ -26,6 +26,15 @@ class DBLayer {
             throw e;
         }
     }
+    getFileCheckStats(){
+        const stat_check_query = "SELECT * FROM stat_check;"
+        try{
+            return this.db.prepare(stat_check_query).all();
+        }catch (e) {
+            log.error("Could not get from database: " + e );
+            throw e;
+        }
+    }
 }
 
 export default DBLayer;

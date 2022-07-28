@@ -270,3 +270,24 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
     }
 
 })
+
+ipcMain.handle('GET_STATISTICS',(e)=>{
+    const data = {
+        checker : {},
+        translator: {},
+    };
+    let alreadyCounted = [];
+    const fileCheckStats = db.getFileCheckStats();
+    data.checker.checksDone = fileCheckStats.length;
+    data.checker.filesChecked = fileCheckStats.reduce((result, item) => {
+        if(!alreadyCounted.includes(item.filename)){
+            alreadyCounted.push(item.filename);
+            result++;
+        }
+        return result;
+    }, 0);
+    data.checker.rowsChecked = fileCheckStats.reduce((result, item) => result + item.rows_checked, 0);
+    data.checker.problemsFound = fileCheckStats.reduce((result, item) => result + item.problems_found, 0);
+    data.checker.files = alreadyCounted.slice(-10);
+    return data;
+});
