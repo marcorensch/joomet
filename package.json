@@ -15,9 +15,11 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-brands-svg-icons": "^6.1.2",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
+    "@kyvg/vue3-notification": "^2.3.6",
     "better-sqlite3": "^7.6.2",
     "chart.js": "^3.8.2",
     "compare-versions": "^4.1.3",

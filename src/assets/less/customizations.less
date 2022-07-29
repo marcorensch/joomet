@@ -41,3 +41,24 @@ hr{
 .uk-card-shadow{
   box-shadow: 0px 0px 8px rgba(0, 0, 0, .2) !important;
 }
+
+/* Notifications */
+.vue-notification {
+  margin-top:61px !important;
+  margin-right:0 !important;
+  // types (green, amber, red)
+  &.success {
+    background: #027902 !important;
+    border-left-color: #016001 !important;
+  }
+
+  &.warn {
+    background: #bd770f !important;
+    border-left-color: #a26509 !important;
+  }
+
+  &.error {
+    background: #800000 !important;
+    border-left-color: #5d0101 !important;
+  }
+}

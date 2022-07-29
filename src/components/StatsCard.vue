@@ -1,5 +1,5 @@
 <template>
-  <div  class="uk-card uk-card-default uk-border-rounded uk-card-shadow " :class="item.containerClasses">
+  <div class="uk-card uk-card-default uk-border-rounded uk-card-shadow " :class="item.containerClasses">
     <div class="uk-card-header">
       <h3 class="uk-card-title">{{ item.title }}</h3>
     </div>
@@ -18,11 +18,16 @@
 
       </template>
       <template v-else>
+
         <div class="uk-flex uk-flex-center">
           <div class="uk-width-1-2 uk-width-1-1@m">
             <canvas ref="canvas"></canvas>
           </div>
         </div>
+        <div class="uk-width-expand uk-margin-top">
+          <span class="uk-text-muted nx-text-small">{{ item.description }}</span>
+        </div>
+
       </template>
     </div>
   </div>
@@ -42,23 +47,30 @@ export default {
     }
   },
   mounted() {
-    if(this.item.type !== 'number'){
-      this.drawCanvas();
+    if (this.item.type !== 'number') {
+      this.drawCanvas(this.item.type);
     }
   },
   methods: {
-    drawCanvas() {
+    drawCanvas(type) {
       const styling = {
         hoverOffset: 2,
         borderWidth: 2,
         borderColor: '#25202a'
       }
-      this.item.value.datasets[0] = Object.assign(this.item.value.datasets[0], styling) ;
+      this.item.value.datasets[0] = Object.assign(this.item.value.datasets[0], styling);
       console.log(this.item.value.datasets[0])
       const ctx = this.$refs.canvas.getContext('2d');
       const chart = new Chart(ctx, {
-        type: 'doughnut',
+        type: type,
         data: this.item.value,
+        options: {
+          plugins: {
+            legend: {
+              display: type == 'doughnut',
+            }
+          },
+        }
       });
     }
   }

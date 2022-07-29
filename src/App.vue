@@ -128,4 +128,9 @@ a:not(.external-link), button:not(.external-link){
   max-width:800px;
 }
 
+.nx-disabled{
+  opacity: 0.5 !important;
+  filter: blur(1px);
+}
+
 </style>

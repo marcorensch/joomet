@@ -3,6 +3,7 @@
     <ViewTitle title="Settings"/>
     <div class="uk-position-relative" uk-height-viewport="offset-top:true">
       <div class="uk-position-cover uk-overflow-auto">
+        <notifications />
         <div v-if="!onlineStatus.online" class="uk-padding uk-padding-remove-bottom">
           <div class="uk-alert uk-alert-danger">
               <h4><font-awesome-icon icon="exclamation-triangle" /> You are offline</h4>
@@ -13,7 +14,7 @@
         </div>
         <div class="uk-width-1-1 uk-padding uk-flex uk-flex-center">
           <form class="uk-form uk-form-horizontal uk-text-left uk-width-1-1 uk-width-4-5@l">
-            <div v-if="settings.key && charsLimit" id="deepl-key-status-container" class="nx-container uk-animation-slide-top-medium">
+            <div id="deepl-key-status-container" class="nx-container" :class="{'nx-disabled': !(settings.key && charsLimit)}">
               <h3 class="uk-h4">DeepL API Usage Statistics</h3>
               <table class="uk-table uk-table-justify uk-table-small uk-margin-remove-bottom">
                 <tbody>
@@ -72,6 +73,9 @@
 
             <div class="uk-margin-top uk-flex uk-flex-right uk-grid-small">
               <div>
+                <button type="reset" class="uk-button uk-button-warning" @click="clearStats">Clear Statistics</button>
+              </div>
+              <div>
                 <button type="reset" class="uk-button uk-button-danger" @click="deleteSettings">Delete</button>
               </div>
               <div>
@@ -90,6 +94,7 @@ import ViewTitle from "@/components/ViewTitle";
 import InputField from "@/components/fields/inputField";
 import SelectField from "@/components/fields/selectField";
 import MessageContainer from "@/components/MessageContainer";
+import UIkit from "uikit";
 
 import {useOnlineStatus} from "@/stores/online";
 
@@ -201,17 +206,72 @@ export default {
           }else{
             // Key entered but offline
           }
+          this.$notify({
+            title: "Success",
+            text: "Settings saved successfully",
+            type: "success"
+          });
         }
+      }).catch((e)=>{
+        this.$notify({
+          title: "Error",
+          text: "Error while saving settings",
+          type: "error",
+        });
       });
     },
     deleteSettings(e) {
       e.preventDefault();
-      window.ipcRenderer.invoke('DELETE_SETTINGS').then(() => {
+      window.ipcRenderer.invoke('DELETE_SETTINGS').then((status) => {
         this.settings = {
           key: '',
           sourceLanguage: 'EN',
           targetLanguage: 'DE',
         };
+        if(status){
+          this.$notify({
+            title: "Success",
+            text: "Settings deleted successfully",
+            type: "success",
+          });
+        }else{
+          this.$notify({
+            title: "Error",
+            text: "Error while deleting settings",
+            type: "error",
+          });
+        }
+
+
+      }).catch((e)=>{
+        this.$notify({
+          title: "Error",
+          text: "Settings could not be deleted",
+          type: "error",
+        });
+      });
+    },
+    clearStats(){
+      window.ipcRenderer.invoke('RESET_STATS').then((status) => {
+        if(status) {
+          this.$notify({
+            title: "Success",
+            text: "Statistics have been reset",
+            type: "success",
+          });
+        }else{
+          this.$notify({
+            title: "Error",
+            text: "Statistics could not be cleared",
+            type: "error",
+          });
+        }
+      }).catch((e)=>{
+        this.$notify({
+          title: "Error",
+          text: "Statistics could not be reset",
+          type: "error",
+        });
       });
     },
     handleValueChange(value, target) {

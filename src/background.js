@@ -215,8 +215,14 @@ ipcMain.handle('SAVE_SETTINGS',async(event,settings)=> {
 })
 
 ipcMain.handle('DELETE_SETTINGS',(e)=>{
-    log.info("Settings deleted")
-    store.delete('settings')
+    try{
+        store.delete('settings')
+        log.info("Settings deleted")
+        return true
+    }catch (error) {
+        log.error(error)
+        return false
+    }
 })
 
 ipcMain.handle('DEEPL_STATUS', async (event, args) => {
@@ -245,7 +251,6 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
     let translatorWrapper = new TranslatorWrapper(dt);
     try {
         let optionalName = fileHelper.buildNewFileName(args.fileName, args.sourceLanguage, args.targetLanguage)
-
         // Define the exported File:
         let filename = await dialog.showSaveDialog(mainWindow, {
                 title: 'Save Translated File',
@@ -261,6 +266,14 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
                 log.error("Error while writing to file: " + error)
                 e.sender.send('ERROR', {error})
             }
+
+            try{
+                let name = filename.filePath.split('/').pop();
+                db.insertTranslationStat(name, data, args.sourceLanguage, args.targetLanguage)
+            }catch(error){
+                log.error("Error while writing to file: " + error)
+                e.sender.send('ERROR', {error})
+            }
         }
 
         return data;
@@ -270,7 +283,9 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
     }
 
 })
-
+ipcMain.handle('RESET_STATS',()=>{
+    return db.resetStats();
+})
 ipcMain.handle('GET_STATISTICS',(e)=>{
     const data = {
         checker : {},
@@ -278,6 +293,8 @@ ipcMain.handle('GET_STATISTICS',(e)=>{
     };
     let alreadyCounted = [];
     const fileCheckStats = db.getFileCheckStats();
+    data.translator = db.getTranslationStats();
+
     data.checker.checksDone = fileCheckStats.length;
     data.checker.filesChecked = fileCheckStats.reduce((result, item) => {
         if(!alreadyCounted.includes(item.filename)){
@@ -286,8 +303,10 @@ ipcMain.handle('GET_STATISTICS',(e)=>{
         }
         return result;
     }, 0);
+
     data.checker.rowsChecked = fileCheckStats.reduce((result, item) => result + item.rows_checked, 0);
     data.checker.problemsFound = fileCheckStats.reduce((result, item) => result + item.problems_found, 0);
     data.checker.files = alreadyCounted.slice(-10);
+
     return data;
 });
