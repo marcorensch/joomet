@@ -1,6 +1,6 @@
 <template>
   <div class="uk-width-1-1">
-    <div class="uk-card uk-card-primary uk-card-small" uk-scrollspy="cls: uk-animation-slide-bottom-medium; delay:0; repeat:true">
+    <div class="uk-card uk-card-primary uk-card-small" uk-scrollspy="cls: uk-animation-slide-top-medium; delay:0; repeat:true">
       <div class="uk-card-header">
         <h3 class="uk-card-title">Statisfied?</h3>
       </div>
@@ -9,7 +9,7 @@
           <div class="uk-width-1-1 uk-width-2-3@m">
             <p >You have already saved at least <b>{{ donationTimeString }}</b> by using this app. More time for family, friends &amp; other projects or just to relax...</p>
             <p>
-              If you like this app, please consider donating a <font-awesome-icon icon="coffee" /> coffee to support the development of this tool.
+              If you like Joomet, please consider donating a <font-awesome-icon icon="coffee" /> to support the development of this tool.
             </p>
           </div>
         </div>

@@ -67,7 +67,8 @@
           <template v-else>
             <div class="uk-position-center uk-text-large uk-text-success uk-animation-fade">
               <font-awesome-icon icon="circle-check" class="medium-icon" style="font-size: 4em" />
-              <p class="">No problems found</p>
+              <p class="">No problems found in {{fileStats.file.name}}!</p>
+              <button class="uk-button uk-button-success" @click="$router.push('/translator')"><font-awesome-icon icon="language" /> Start Translation</button>
             </div>
           </template>
         </div>

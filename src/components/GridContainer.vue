@@ -1,6 +1,7 @@
 <template>
   <div>
     <div uk-grid class="uk-grid-small uk-child-width-1-2 uk-child-width-1-3@m" uk-height-match="target: .outterSize">
+      <DonationCard v-if="donationTimeString && alreadyTranslated" :donationTimeString="donationTimeString"/>
       <div v-if="checksDoughnut" class="uk-width-1-1 uk-width-1-3@m">
         <StatsCard :item="checksDoughnut" />
       </div>
@@ -24,7 +25,6 @@
           </div>
         </div>
       </div>
-      <DonationCard v-if="donationTimeString && alreadyTranslated" :donationTimeString="donationTimeString"/>
     </div>
   </div>
 </template>
