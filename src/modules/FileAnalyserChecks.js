@@ -28,20 +28,25 @@ class Checker {
      * @author Marco Rensch
      */
     checkRows() {
-        // Checker Result only contains ROW items of rows with errors
-        let checkerResults = []
-        let rowNum = 1
-        for (const rowString of this.fileContent) {
-            let rowObj = new Row(rowNum, rowString)
-            rowObj.checks = this.checkRow(rowObj)
-            // Push if errors found
-            let arrOfErrors = this.getFails(rowObj.checks, rowNum);
-            if (arrOfErrors.length > 0) {
-                checkerResults = checkerResults.concat(arrOfErrors)
+        return new Promise((resolve)=>{
+            // Checker Result only contains ROW items of rows with errors
+            let checkerResults = []
+            let rowNum = 1
+            for (const rowString of this.fileContent) {
+                let rowObj = new Row(rowNum, rowString)
+                if(rowObj.string.trim().length > 0){
+                    rowObj.checks = this.checkRow(rowObj)
+                    // Push if errors found
+                    let arrOfErrors = this.getFails(rowObj.checks, rowNum);
+                    if (arrOfErrors.length > 0) {
+                        checkerResults = checkerResults.concat(arrOfErrors)
+                    }
+                }
+                rowNum++
             }
-            rowNum++
-        }
-        return {count: this.fileContent.length, checkerResults}
+            resolve({count: this.fileContent.length, checkerResults})
+        })
+
     }
 
     /**
@@ -58,7 +63,8 @@ class Checker {
                 lineFormatting: {status: true, message: '', hint: ''}
             }
         }
-        if (!row.string.length || /^;/.test(row.string)) {
+
+        if (!row.string.trim().length || /^;/.test(row.string)) {
             // Empty or comment row
             return new RowCheck(null, null, null)
         }
@@ -78,7 +84,7 @@ class Checker {
                 checks: {
                     allUpper: KeyChecker.allUppercase(row.key),
                     validChars: KeyChecker.validCharacters(row.key),
-                    duplicates: checkDuplicates
+                    duplicates: checkDuplicates,
                 }
             };
             valueChecks = {

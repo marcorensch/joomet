@@ -7,8 +7,18 @@ export default class FileHelper {
             const fileContent = fs.readFileSync(filePath, "utf-8");
             return fileContent.trim().split(/\r?\n/);
         } catch (err) {
-            console.log(err);
+            log.error(err);
         }
+    }
+
+    readFileAsync(filePath) {
+        fs.readFile(filePath, "utf-8", (err, data) => {
+            if (err) {
+                log.error(err);
+            } else {
+                return data;
+            }
+        });
     }
 
     prepareRowData(rows) {
@@ -24,22 +34,26 @@ export default class FileHelper {
     }
 
     getFileDetails(fileContentArray){
-        let commentsCount = 0;
-        let rowsCount = 0;
-        for(let row of fileContentArray){
-            if(row.trim().length > 0){
-                if(row.startsWith(';')){
-                    commentsCount++;
-                }else{
-                    rowsCount++;
+        return new Promise((resolve)=>{
+            let commentsCount = 0;
+            let rowsCount = 0;
+            for(let row of fileContentArray){
+                if(row.trim().length > 0){
+                    if(row.startsWith(';')){
+                        commentsCount++;
+                    }else{
+                        rowsCount++;
+                    }
                 }
             }
-        }
-        return {
-            rows: fileContentArray.length,
-            translations: rowsCount,
-            comments: commentsCount,
-        }
+            const details = {
+                rows: fileContentArray.length,
+                translations: rowsCount,
+                comments: commentsCount,
+            }
+            resolve (details)
+        })
+
     }
 
     writeToFile(path, data) {

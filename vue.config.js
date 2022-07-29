@@ -14,8 +14,8 @@ module.exports = defineConfig({
       // Or, for multiple preload files:
       // preload: { preload: 'src/preload.js', otherPreload: 'src/preload2.js' }
       builderOptions:{
-        "appId": "nxd.jvelt.app",
-        "productName": "veltj",
+        "appId": "nxd.joomet.app",
+        "productName": "Joomet",
         "copyright": "Copyright © 2022 nx-designs"
       },
     }

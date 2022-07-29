@@ -6,7 +6,6 @@
     <td class="uk-text-left">
       {{ row.check.message }}
       <AnalyserDetailModal :row="row" :el-index="itemIndex" />
-
     </td>
   </tr>
 </template>

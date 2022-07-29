@@ -5,43 +5,7 @@
       <div class="uk-position-cover uk-overflow-auto">
         <!-- ONLINE -->
         <div v-if="onlineStatus.online">
-          <div v-if="store.file" class="uk-position-bottom uk-position-z-index">
-            <div class="nx-footer-container uk-text-left uk-text-small">
 
-              <div class="uk-grid-small uk-child-width-expand uk-flex uk-flex-middle" uk-grid>
-
-                <div class="uk-width-auto uk-visible@m">
-                <span>
-                  Translating:
-                </span>
-                </div>
-                <div class="uk-width-expand uk-text-truncate uk-visible@m">
-                  <span class="uk-width-small uk-text-meta">{{ currentString }}</span>
-                </div>
-
-                <div class="uk-width-auto"><span>Overall:</span></div>
-                <div>
-                  <progress class="uk-progress" :value="currentIndex" :max="totalRows"/>
-                </div>
-
-                <div class="uk-width-auto">
-                  <button v-if="!translationRunning" class="uk-button uk-button-small uk-button-success"
-                          :class="{'uk-disabled':disabled}"
-                          @click="startTranslation">Start Translation
-                  </button>
-                  <div v-if="translationRunning" class="uk-button-group">
-                    <button class="uk-button uk-button-small nx-button-default" @click="cancelTranslation">Cancel
-                    </button>
-                    <button class="uk-button uk-button-small uk-button-success" @click="saveTranslation"
-                    >
-                      <font-awesome-icon icon="save"/>
-                      Save
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <div v-if="store.file" class="uk-width-1-1 uk-padding">
             <div class="uk-form uk-form-horizontal uk-text-left">
               <div class="uk-margin">
@@ -86,6 +50,38 @@
                            @valueChanged="handleValueChange"/>
             </div>
           </div>
+          <div v-if="store.file" class="uk-position-bottom uk-position-z-index">
+            <div class="nx-footer-container uk-text-left uk-text-small">
+
+              <div class="uk-grid-small uk-child-width-expand uk-flex uk-flex-middle" uk-grid>
+
+                <div class="uk-width-auto uk-visible@m">
+                <span>
+                  Translating:
+                </span>
+                </div>
+                <div class="uk-width-expand uk-text-truncate uk-visible@m">
+                  <span class="uk-width-small uk-text-meta">{{ currentString }}</span>
+                </div>
+
+                <div class="uk-width-auto"><span>Overall:</span></div>
+                <div>
+                  <progress class="uk-progress" :value="currentIndex" :max="totalRows"/>
+                </div>
+
+                <div class="uk-width-auto">
+                  <button v-if="!translationRunning" class="uk-button uk-button-small uk-button-success"
+                          :class="{'uk-disabled':disabled}"
+                          @click="startTranslation">Start Translation
+                  </button>
+                  <div v-if="translationRunning" class="uk-button-group">
+                    <button class="uk-button uk-button-small nx-button-default" @click="cancelTranslation">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <Upload v-else @file-changed="handleFileChanged"/>
         </div>
         <!-- OFFLINE -->
@@ -235,17 +231,18 @@ export default {
         fileName: this.store.file.name
       }).then((result) => {
         console.log(result)
+        this.translationRunning = false;
+        this.currentIndex = 0;
+        new Notification("Joomet Translation", { body: "Translation done" });
       }).catch((error) => {
         alert(`Application Error\n${error}`);
       });
     },
     cancelTranslation() {
-      console.log('cancel translation clicked')
       this.translationRunning = false;
+      this.currentIndex = 0;
       window.ipcRenderer.send('CANCEL_TRANSLATION');
-    },
-    saveTranslation() {
-      this.translationRunning = false;
+      new Notification("Joomet Translation", { body: "Translation manually cancelled" });
     },
     checkOnlineStatus() {
       this.onlineStatus.online = navigator.onLine;

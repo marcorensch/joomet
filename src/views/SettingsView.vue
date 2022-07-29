@@ -3,7 +3,6 @@
     <ViewTitle title="Settings"/>
     <div class="uk-position-relative" uk-height-viewport="offset-top:true">
       <div class="uk-position-cover uk-overflow-auto">
-        <notifications />
         <div v-if="!onlineStatus.online" class="uk-padding uk-padding-remove-bottom">
           <div class="uk-alert uk-alert-danger">
               <h4><font-awesome-icon icon="exclamation-triangle" /> You are offline</h4>

@@ -61,23 +61,18 @@ async function createWindow() {
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-        if (!process.env.IS_TEST) mainWindow.webContents.openDevTools()
+        if (isDevelopment) mainWindow.webContents.openDevTools()
     } else {
         createProtocol('app')
         // Load the index.html when not in development
         mainWindow.loadURL('app://./index.html')
-
     }
-
-    mainWindow.webContents.send('tests-backend-init', "sent from backend");
 
     // opens all "_blank" targets in default browser!
     mainWindow.webContents.setWindowOpenHandler(({url}) => {
         shell.openExternal(url);
         return {action: 'deny'};
     });
-
-    // win.webContents.send('tests', {'Hello There': 'General Kenobi'});
 }
 
 // Quit when all windows are closed.
@@ -148,23 +143,25 @@ ipcMain.handle("LOADED", async (event) => {
     return {appVersion: app.getVersion(), updateStatus};
 })
 
-ipcMain.handle('INV_READ_FILE',(event, file)=>{
+ipcMain.handle('INV_READ_FILE',async (event, file)=>{
     if (fs.existsSync(file.path)) {
         if (allowedFileTypesForCheck.includes(path.extname(file.path).toLowerCase())) {
 
             const fileContentArray = fileHelper.readFileSync(file.path)
-            let fileStats = fileHelper.getFileDetails(fileContentArray)
+            let fileStats = await fileHelper.getFileDetails(fileContentArray)
 
-            // The Checker
+            console.log(fileStats)
             let checker = new Checker(fileContentArray, file);
             let fileNameCheck = checker.checkFileName();
-            let rowsCheckResults = checker.checkRows();
+            let rowsCheckResults = await checker.checkRows();
+            console.log(rowsCheckResults)
             fileStats.problems = rowsCheckResults.checkerResults.length
 
             // Write to stats DB
-            db.insertFileCheckStats(fileStats, file.name)
+            //db.insertFileCheckStats(fileStats, file.name)
 
             return {fileStats, rowsCheckResults, fileNameCheck}
+
         } else {
             log.error("Filetype not allowed: " + path.extname(file.path));
             throw `File: "${file.name}" has no valid Filetype`
@@ -310,3 +307,8 @@ ipcMain.handle('GET_STATISTICS',(e)=>{
 
     return data;
 });
+
+ipcMain.on('OPEN_FILE',(e, args)=>{
+    console.log(args)
+    shell.openExternal('file://'+args)
+})

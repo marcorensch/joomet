@@ -4,6 +4,7 @@
 
     <div class="uk-width-expand uk-position-relative">
       <div id="content" class=" uk-light uk-position-cover">
+        <notifications />
         <router-view/>
       </div>
     </div>

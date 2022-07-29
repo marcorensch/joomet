@@ -1,10 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import {Checker} from "@/modules/FileAnalyserChecks";
+import FileHelper from "@/modules/FileHelper.mjs";
 
 // White-listed channels.
 const ipc = {
     'render': {
         // From render to main.
-        'send': ['SAVE_SETTINGS','GET_SETTINGS','CANCEL_TRANSLATION'],
+        'send': ['SAVE_SETTINGS','GET_SETTINGS','CANCEL_TRANSLATION', 'OPEN_FILE'],
         // From main to render.
         'receive': ['DEEPL_ERROR','GET_SETTINGS','SETTINGS_SAVED', 'TRANSLATOR-PROGRESS'],
         // From render to main and back again.
@@ -42,5 +44,10 @@ const exposedAPI = {
         ipcRenderer.removeAllListeners(channel)
     }
 }
+
+const checker = new Checker();
+const fh = new FileHelper();
 // Expose ipcRenderer to the client
 contextBridge.exposeInMainWorld('ipcRenderer', exposedAPI);
+contextBridge.exposeInMainWorld('Checker', checker);
+contextBridge.exposeInMainWorld('FileHelper', fh);
