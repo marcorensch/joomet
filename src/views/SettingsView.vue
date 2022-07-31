@@ -72,7 +72,7 @@
 
             <div class="uk-margin-top uk-flex uk-flex-right uk-grid-small">
               <div>
-                <button type="reset" class="uk-button uk-button-warning" @click="clearStats">Clear Statistics</button>
+                <button class="uk-button uk-button-warning" @click="clearStats">Clear Statistics</button>
               </div>
               <div>
                 <button type="reset" class="uk-button uk-button-danger" @click="deleteSettings">Delete</button>

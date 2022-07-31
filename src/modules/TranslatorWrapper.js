@@ -11,27 +11,40 @@ export default class TranslatorWrapper {
         let rows = fh.readFileSync(filePath);
         let contentRows = fh.prepareRowData(rows);
 
-        sourceLanguage = sourceLanguage === 'EN' ? "en-GB": sourceLanguage;
-        targetLanguage = targetLanguage === 'EN' ? "en-GB": targetLanguage;
+        // sourceLanguage = sourceLanguage === 'EN' ? "EN-GB": sourceLanguage;
+        // targetLanguage = targetLanguage === 'EN' ? "EN-GB": targetLanguage;
         let cancelled = false;
 
+        console.log(sourceLanguage, targetLanguage);
         ipcMain.on('CANCEL_TRANSLATION', (event, arg) => {
             console.log('Translation cancel Event')
             cancelled = true;
-
         });
 
         for (const row of contentRows) {
             if(cancelled){
-                break;
+                return {
+                    success: false,
+                    notification:{
+                        title: "Translation aborted",
+                        message: "",
+                    },
+                    rows: contentRows
+                }
             }
             if (row instanceof Row && row.value_orig !== "") {
                 try {
                     row.value_translated = await this.translateRow(row.value_orig, sourceLanguage === 'AUTO' ? null : sourceLanguage, targetLanguage);
                 } catch (error) {
                     console.log('Translator-Error', error)
-                    // Todo: message error to frontend
-                    break;
+                    return {
+                        status: false,
+                        notification:{
+                            title: "Translation Error",
+                            message: error
+                        },
+                        rows: contentRows
+                    };
                 }
             }
             window.webContents.send('TRANSLATOR-PROGRESS', {
@@ -41,7 +54,7 @@ export default class TranslatorWrapper {
                 currentString: row.value_orig,
             });
         }
-        return contentRows;
+        return {status: true, notification: null, rows: contentRows};
     }
 
     async translateRow(value, sourceLang, targetLang) {

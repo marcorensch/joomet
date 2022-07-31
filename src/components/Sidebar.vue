@@ -6,24 +6,34 @@
 
         <router-link to="/" custom v-slot="{ href, navigate, isActive, isExactActive }">
           <li id="dashboard-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="grip" /><span>Dashboard</span></a>
+            <a :href="href" @click="navigate"><font-awesome-icon icon="grip" class="menu-icon"  /><span>Dashboard</span></a>
           </li>
         </router-link>
 
         <router-link :to="{name:'File Analyser'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
           <li id="checker-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive || subIsActive('/checker') }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="file-circle-check" /><span>FileAnalyser</span></a>
+            <a :href="href" @click="navigate"><font-awesome-icon icon="file-circle-check" class="menu-icon"  /><span>FileAnalyser</span></a>
           </li>
         </router-link>
 
         <router-link :to="{name:'Translator'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
           <li id="translator-link" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/translator') }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="language" /><span>Translator</span></a>
+            <a :href="href" @click="navigate"><font-awesome-icon icon="language" class="menu-icon"  /><span>Translator</span></a>
           </li>
         </router-link>
         <div>
           <hr class="nx-hr uk-margin-top">
         </div>
+        <li class="nx-text-xsmall">
+          <a href="https://docs.joomla.org/Creating_a_language_definition_file" class="external_link uk-link-muted" target="_blank">
+            <font-awesome-icon icon="info-circle" class="menu-icon"  /><span>JDocs Language File</span>
+          </a>
+        </li>
+        <li class="nx-text-xsmall">
+          <a href="https://docs.joomla.org/Creating_a_language_definition_file" class="external_link uk-link-muted" target="_blank">
+            <font-awesome-icon icon="coffee" class="menu-icon" /><span>Buy me a coffee</span>
+          </a>
+        </li>
       </ul>
     </div>
     <div class="uk-position-bottom">
@@ -144,6 +154,11 @@ a.nx-update-notification:hover {
   background: #0097fe;
   text-decoration: none;
   transition: all .2s ease-in-out;
+}
+
+.menu-icon{
+  width: 1.2em;
+  text-align: left;
 }
 
 </style>

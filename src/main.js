@@ -24,12 +24,12 @@ import {
     faTriangleExclamation,
     faChartLine,
     faSave,
-    faWifi, faExternalLinkAlt, faCoffee, faCircleCheck
+    faWifi, faExternalLinkAlt, faCoffee, faCircleCheck, faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
 import {faPaypal, faStripe} from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add( faStripe, faCoffee, faPaypal, faExternalLinkAlt, faWifi, faSave, faBarsProgress, faGrip, faRotate, faPlusCircle, faCircleXmark, faFolder, faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faCircleCheck, faFileCircleCheck, faBars, faTrashCan, faLanguage, faFile, faTriangleExclamation, faChartLine)
+library.add( faInfoCircle, faStripe, faCoffee, faPaypal, faExternalLinkAlt, faWifi, faSave, faBarsProgress, faGrip, faRotate, faPlusCircle, faCircleXmark, faFolder, faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faCircleCheck, faFileCircleCheck, faBars, faTrashCan, faLanguage, faFile, faTriangleExclamation, faChartLine)
 
 createApp(App)
     .component('font-awesome-icon', FontAwesomeIcon)

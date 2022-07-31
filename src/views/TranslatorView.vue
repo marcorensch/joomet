@@ -52,9 +52,7 @@
           </div>
           <div v-if="store.file" class="uk-position-bottom uk-position-z-index">
             <div class="nx-footer-container uk-text-left uk-text-small">
-
               <div class="uk-grid-small uk-child-width-expand uk-flex uk-flex-middle" uk-grid>
-
                 <div class="uk-width-auto uk-visible@m">
                 <span>
                   Translating:
@@ -64,8 +62,8 @@
                   <span class="uk-width-small uk-text-meta">{{ currentString }}</span>
                 </div>
 
-                <div class="uk-width-auto"><span>Overall:</span></div>
-                <div>
+                <div class="uk-width-auto"><span>Progress:</span></div>
+                <div :uk-tooltip="percentage+'%'">
                   <progress class="uk-progress" :value="currentIndex" :max="totalRows"/>
                 </div>
 
@@ -139,6 +137,7 @@ export default {
       translationRunning: false,
       currentIndex: 0,
       totalRows: 100,
+      percentage: 0,
       onlineStatus: useOnlineStatus(),
     };
   },
@@ -151,9 +150,23 @@ export default {
     this.buildView();
     window.ipcRenderer.receive('TRANSLATOR-PROGRESS', (data) => {
       this.currentString = data.currentString;
-      this.currentIndex = data.index + 1;
+      this.currentIndex++; // Increment the current index because data.index is async and not accurate
       this.totalRows = data.total;
+      this.percentage = Math.round((this.currentIndex / this.totalRows) * 100);
     });
+
+    router.beforeResolve(async to => {
+      if (this.translationRunning) {
+        console.log("blocked while translating")
+        this.$notify({
+          title: "Warning",
+          text: "You can not switch views while the translation is running.",
+          type: "warn",
+        });
+        return false;
+      }
+    })
+
   },
   methods: {
     buildView() {
@@ -230,10 +243,15 @@ export default {
         filePath: this.store.file.path,
         fileName: this.store.file.name
       }).then((result) => {
+        if(result.status){
+          this.translationRunning = false;
+          this.currentIndex = 0;
+          new Notification("Translation Done", { body: `Translation of ${this.store.file.name} completed` });
+        }else{
+          new Notification(result.notification.title, { body: `${this.store.file.name}\n ${result.notification.message}`});
+        }
         console.log(result)
-        this.translationRunning = false;
-        this.currentIndex = 0;
-        new Notification("Joomet Translation", { body: "Translation done" });
+
       }).catch((error) => {
         alert(`Application Error\n${error}`);
       });
@@ -242,10 +260,12 @@ export default {
       this.translationRunning = false;
       this.currentIndex = 0;
       window.ipcRenderer.send('CANCEL_TRANSLATION');
-      new Notification("Joomet Translation", { body: "Translation manually cancelled" });
     },
     checkOnlineStatus() {
       this.onlineStatus.online = navigator.onLine;
+      if(!this.onlineStatus.online) {
+        new Notification("Joomet", { body: "Joomet is Offline" });
+      }
       this.buildView();
     }
   },

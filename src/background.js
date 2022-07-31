@@ -3,7 +3,7 @@
 import * as path from "path";
 import fs from "fs";
 
-import {app, protocol, BrowserWindow, ipcMain, shell, dialog} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain, shell, dialog, Notification} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import fetch from 'electron-fetch'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
@@ -256,24 +256,31 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
             });
         let data = await translatorWrapper.translateFile(args.sourceLanguage, args.targetLanguage, args.filePath, mainWindow)
         if(data && !filename.canceled){
-            try {
-                fileHelper.writeToFile(filename.filePath, fileHelper.prepareDataForNewFile(data))
-                log.info("File saved " + filename.filePath)
-            } catch (error) {
-                log.error("Error while writing to file: " + error)
-                e.sender.send('ERROR', {error})
+            if(data.status) {
+                try {
+                    fileHelper.writeToFile(filename.filePath, fileHelper.prepareDataForNewFile(data.rows))
+                    log.info("File saved " + filename.filePath)
+                } catch (error) {
+                    log.error("Error while writing to file: " + error)
+                    data.status = false;
+                    data.notification = {
+                        title: "Error",
+                        message: "File could not be translated\nPlease check source file and try again"
+                    }
+                }
+                // Write Stats to db
+                try {
+                    let name = filename.filePath.split('/').pop();
+                    db.insertTranslationStat(name, data.rows, args.sourceLanguage, args.targetLanguage)
+                } catch (error) {
+                    log.error("Error while saving stats: " + error)
+                }
+            }else{
+                let message = data.notification.title ? `${data.notification.title}: ${data.notification.message}` : data.notification.message;
+                log.error(message)
             }
-
-            try{
-                let name = filename.filePath.split('/').pop();
-                db.insertTranslationStat(name, data, args.sourceLanguage, args.targetLanguage)
-            }catch(error){
-                log.error("Error while writing to file: " + error)
-                e.sender.send('ERROR', {error})
-            }
+            return data;
         }
-
-        return data;
     }catch (error) {
         log.error("TRANSLATE ERROR: " + error)
         e.sender.send('DEEPL_ERROR', {error})
