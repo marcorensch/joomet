@@ -5,7 +5,6 @@
       <div class="uk-position-cover uk-overflow-auto">
         <!-- ONLINE -->
         <div v-if="onlineStatus.online">
-
           <div v-if="store.file" class="uk-width-1-1 uk-padding">
             <div class="uk-form uk-form-horizontal uk-text-left">
               <div class="uk-margin">
@@ -62,8 +61,11 @@
                   <span class="uk-width-small uk-text-meta">{{ currentString }}</span>
                 </div>
 
-                <div class="uk-width-auto"><span>Progress:</span></div>
-                <div :uk-tooltip="percentage+'%'">
+                <div class="uk-width-auto">
+                  <span v-if="percentage==0">Progress:</span>
+                  <span v-else>{{percentage+'%'}} </span>
+                </div>
+                <div>
                   <progress class="uk-progress" :value="currentIndex" :max="totalRows"/>
                 </div>
 
@@ -158,7 +160,6 @@ export default {
 
     router.beforeResolve(async to => {
       if (this.translationRunning) {
-        console.log("blocked while translating")
         this.$notify({
           title: "Warning",
           text: "You can not switch views while the translation is running.",
@@ -252,16 +253,17 @@ export default {
         fileName: this.store.file.name
       }).then((result) => {
         if(result.status){
-          this.translationRunning = false;
-          this.currentIndex = 0;
           new Notification("Translation Done", { body: `Translation of ${this.store.file.name} completed` });
         }else{
           new Notification(result.notification.title, { body: `${this.store.file.name}\n ${result.notification.message}`});
         }
-        console.log(result)
-
       }).catch((error) => {
         alert(`Application Error\n${error}`);
+      }).finally(() => {
+        this.translationRunning = false;
+        this.translationRunning = false;
+        this.percentage = 0;
+        this.currentIndex = 0;
       });
     },
     cancelTranslation() {
@@ -277,7 +279,6 @@ export default {
       this.buildView();
     }
   },
-
 }
 </script>
 

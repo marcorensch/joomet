@@ -196,6 +196,11 @@ ipcMain.handle('GET_SETTINGS',(e)=>{
     return store.get('settings');
 })
 
+ipcMain.handle('UPDATE_LANGUAGES_CACHE',async (e)=>{
+    log.info("Manual updating Languages Cache")
+    return await updateLanguagesCache()
+})
+
 async function updateLanguagesCache(){
     const settings = store.get('settings');
     if (settings && settings.key) {
@@ -212,9 +217,9 @@ async function updateLanguagesCache(){
             })
             if(sourceLanguages && targetLanguages){
                 let languages = sourceLanguages.concat(targetLanguages);
-                console.log(languages)
                 if(db.resetLanguages()){
                     db.insertLanguages(languages)
+                    log.info("Languages Cache updated")
                 }
             }
         }catch(error){

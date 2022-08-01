@@ -40,9 +40,12 @@
                 </tr>
                 </tbody>
               </table>
-              <div class="uk-flex uk-flex-right">
+              <div class="uk-flex uk-flex-right uk-grid-small">
                 <div>
-                  <button class="uk-button nx-button-default" :class="{'uk-disabled': !onlineStatus.online}" @click="getDeeplUsage">Update Usage Information</button>
+                  <button class="uk-button nx-button-default uk-button-small" :class="{'uk-disabled': !onlineStatus.online}" @click="updateLanguagesCache">Update Languages</button>
+                </div>
+                <div>
+                  <button class="uk-button nx-button-default uk-button-small" :class="{'uk-disabled': !onlineStatus.online}" @click="getDeeplUsage">Update Usage Information</button>
                 </div>
               </div>
             </div>
@@ -68,6 +71,15 @@
                            :options="targetLanguages"
                            :selected="settings.targetLanguage"
                            @valueChanged="handleValueChange"/>
+              <div class="uk-margin-top">
+                <div class="uk-form-label">
+                  <label for="useFormality">Use Formal translation <span class="nx-text-xsmall">(if supported)</span></label>
+                </div>
+                <div class="uk-form-controls uk-form-controls-text">
+                  <input type="checkbox" class="uk-checkbox" id="useFormality" name="useFormality" v-model="settings.useFormality" @change="handleValueChange">
+                </div>
+              </div>
+
             </div>
 
             <div class="uk-margin-top uk-flex uk-flex-right uk-grid-small">
@@ -111,6 +123,7 @@ export default {
         key: '',
         sourceLanguage: 'EN',
         targetLanguage: 'DE',
+        useFormality: false,
       },
       sourceLanguages: [],
       targetLanguages: [],
@@ -168,6 +181,19 @@ export default {
           document.getElementById('charsPercentageText').classList.remove('uk-animation-fade');
         }
       }
+    },
+    updateLanguagesCache(e) {
+      if (e) e.preventDefault();
+      window.ipcRenderer.invoke('UPDATE_LANGUAGES_CACHE').then(() => {
+        new Notification('Languages updated', {
+          body: 'Language Cache successfully updated',
+        });
+        this.getLanguages();
+      }).catch((e) => {
+        new Notification('Error', {
+          body: 'Error updating language cache\n' + e,
+        });
+      });
     },
     getDeeplUsage(e) {
       if (e) e.preventDefault();
