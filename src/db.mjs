@@ -4,14 +4,16 @@ import log from "electron-log";
 
 class DBLayer {
     constructor(pathTo) {
-        this.db = new Database(path.join(pathTo,'statistics.veltd'));
+        this.db = new Database(path.join(pathTo,'storage.data'));
     }
     createTables() {
         const stat_check_query = "CREATE TABLE IF NOT EXISTS stat_check('id' INTEGER PRIMARY KEY, 'timestamp' INTEGER, 'filename' TEXT, 'rows_checked' INTEGER, 'problems_found' INTEGER);"
         const stat_translation_query = "CREATE TABLE IF NOT EXISTS stat_translation('id' INTEGER PRIMARY KEY, 'timestamp' INTEGER, 'filename' TEXT, 'rows' INTEGER, 'source_language' TEXT, 'target_language' TEXT);"
+        const languages_query = "CREATE TABLE IF NOT EXISTS languages('id' INTEGER PRIMARY KEY, 'name' TEXT, 'code' TEXT, 'type' TEXT, 'supports_formality' INTEGER);"
         try{
             this.db.prepare(stat_check_query).run();
             this.db.prepare(stat_translation_query).run();
+            this.db.prepare(languages_query).run();
         }catch (e) {
             log.error("Could not create database table: " + e );
         }
@@ -67,6 +69,54 @@ class DBLayer {
         }catch (e) {
             log.error("Could not delete from database: " + e );
             return false;
+        }
+    }
+
+    /* Languages */
+    resetLanguages(){
+        const languages_query = "DELETE FROM languages;"
+        try{
+            this.db.prepare(languages_query).run();
+            return true;
+        }catch (e) {
+            log.error("Could not delete from database: " + e );
+            return false;
+        }
+    }
+    insertLanguage(name, code, type, supportsFormality){
+        const languages_query = "INSERT INTO languages(name, code, type, supports_formality) VALUES(?,?,?,?);"
+        try{
+            this.db.prepare(languages_query).run(name, code, type, supportsFormality);
+        }catch (e) {
+            log.error("Could not insert into database: " + e );
+            throw e;
+        }
+    }
+    insertLanguages(languages){
+        const languages_query = "INSERT INTO languages(name, code, type, supports_formality) VALUES(?,?,?,?);"
+        try{
+            languages.forEach(language => {
+                this.db.prepare(languages_query).run(language.name, language.code, language.type, language.supportsFormality);
+            });
+        }catch (e) {
+            log.error("Could not insert into database: " + e );
+            throw e;
+        }
+    }
+    getTargetLanguages(){
+        const languages_query = "SELECT * FROM languages WHERE type='target' ORDER BY 'name' ASC;"
+        try{
+            return this.db.prepare(languages_query).all();
+        }catch (e) {
+            log.error("Could not get from database: " + e );
+        }
+    }
+    getSourceLanguages(){
+        const languages_query = "SELECT * FROM languages WHERE type='source' ORDER BY 'name' ASC;"
+        try{
+            return this.db.prepare(languages_query).all();
+        }catch (e) {
+            log.error("Could not get from database: " + e );
         }
     }
 }

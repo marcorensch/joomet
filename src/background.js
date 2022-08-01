@@ -189,25 +189,44 @@ ipcMain.handle('CHECK_API_KEY', async (event) => {
 })
 
 ipcMain.handle('INV_GET_LANGUAGES',async(e)=>{
-    return store.get('languages');
+    return [db.getSourceLanguages(), db.getTargetLanguages()]
 })
 
 ipcMain.handle('GET_SETTINGS',(e)=>{
     return store.get('settings');
 })
 
-ipcMain.handle('SAVE_SETTINGS',async(event,settings)=> {
-    store.set('settings', settings)
-    //Update Languages cache:
-    if(settings.key){
-        const translator = new deepl.Translator(settings.key);
-        try {
-            store.set('languages', await translator.getSourceLanguages())
-            log.info("Languages cache updated")
-        } catch (error) {
-            log.error('DEEPL Error: ' + error)
-            event.sender.send('DEEPL_ERROR', {error})
+async function updateLanguagesCache(){
+    const settings = store.get('settings');
+    if (settings && settings.key) {
+        try{
+            const translator = new deepl.Translator(settings.key)
+            const sourceLanguages = await translator.getSourceLanguages()
+            sourceLanguages.forEach(language => {
+                language.type = 'source'
+            })
+            const targetLanguages = await translator.getTargetLanguages()
+            targetLanguages.forEach(language => {
+                language.type = 'target'
+                language.supportsFormality = language.supportsFormality ? 1 : 0
+            })
+            if(sourceLanguages && targetLanguages){
+                let languages = sourceLanguages.concat(targetLanguages);
+                console.log(languages)
+                if(db.resetLanguages()){
+                    db.insertLanguages(languages)
+                }
+            }
+        }catch(error){
+            log.error(error)
         }
+    }
+}
+
+ipcMain.handle('SAVE_SETTINGS',async(event,settings)=> {
+    store.set('settings', settings);
+    if(db.getSourceLanguages().length === 0 || db.getTargetLanguages().length === 0){
+        await updateLanguagesCache();
     }
 })
 

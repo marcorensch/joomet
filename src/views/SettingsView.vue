@@ -59,13 +59,13 @@
                            :id="'sourceLanguage'"
                            :required="'true'"
                            :manualOption="{value:'AUTO',label:'Auto Detect'}"
-                           :options="languages"
+                           :options="sourceLanguages"
                            :selected="settings.sourceLanguage"
                            @valueChanged="handleValueChange"/>
               <SelectField :label="'Target Language'"
                            :id="'targetLanguage'"
                            :required="'true'"
-                           :options="languages"
+                           :options="targetLanguages"
                            :selected="settings.targetLanguage"
                            @valueChanged="handleValueChange"/>
             </div>
@@ -112,7 +112,8 @@ export default {
         sourceLanguage: 'EN',
         targetLanguage: 'DE',
       },
-      languages: [],
+      sourceLanguages: [],
+      targetLanguages: [],
       keyError: false,
       deeplApiErrorText: '',
       errorMessage: '',
@@ -183,7 +184,13 @@ export default {
     },
     async getLanguages() {
       const languages = await window.ipcRenderer.invoke('INV_GET_LANGUAGES');
-      this.languages = languages.map(lng => {
+      this.sourceLanguages = languages[0].map(lng => {
+        return {
+          label: lng.name,
+          value: lng.code
+        }
+      });
+      this.targetLanguages = languages[1].map(lng => {
         return {
           label: lng.name,
           value: lng.code
