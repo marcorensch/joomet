@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import ProjectsListItem from "@/components/projects/list/ProjectsListItem";
+import ProjectsListItem from "@/components/layouts/list/item";
 
 export default {
   name: "ProjectsGrid",

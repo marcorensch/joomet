@@ -1,24 +1,36 @@
 {
-  "name": "vue-uikit",
-  "version": "0.1.0",
+  "name": "joomet",
+  "version": "0.3.0",
   "private": true,
-  "description": "vue 3.x with UIkit",
+  "main": "background.js",
+  "description": "Application to help you check & translate your language files for Joomla! extensions.",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "tests": "mocha tests/Tests.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-brands-svg-icons": "^6.1.2",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
+    "@kyvg/vue3-notification": "^2.3.6",
+    "better-sqlite3": "^7.6.2",
+    "chart.js": "^3.8.2",
+    "compare-versions": "^4.1.3",
     "core-js": "^3.8.3",
-    "nedb-promises": "^6.0.3",
+    "deepl-node": "^1.3.1",
+    "electron-fetch": "^1.7.4",
+    "electron-log": "^4.4.8",
+    "electron-store": "^8.0.2",
     "node-abi": "^3.8.0",
+    "pinia": "^2.0.14",
     "uikit": "^3.13.4",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
@@ -29,13 +41,19 @@
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
-    "electron": "^18.0.1",
-    "electron-builder": "^22.14.13",
+    "electron": "^19.0.8",
+    "electron-builder": "^23.1.0",
     "electron-devtools-installer": "^3.1.0",
     "electron-rebuild": "^3.2.7",
     "less": "^4.0.0",
     "less-loader": "^8.0.0",
-    "vue-cli-plugin-electron-builder": "~2.1.1"
+    "mocha": "^10.0.0",
+    "vue-cli-plugin-electron-builder": "^2.1.1"
+  },
+  "overrides": {
+    "vue-cli-plugin-electron-builder": {
+      "electron-builder": "^23.1.0"
+    }
   },
   "browserslist": [
     "> 1%",

@@ -4,6 +4,7 @@
 
     <div class="uk-width-expand uk-position-relative">
       <div id="content" class=" uk-light uk-position-cover">
+        <notifications />
         <router-view/>
       </div>
     </div>
@@ -25,15 +26,18 @@
     data() {
       return {
         appInfo: {
-          appVersion: null
+          appVersion: null,
+          updateStatus: {},
         }
       }
     },
     mounted() {
       window.ipcRenderer.invoke('LOADED','').then((result) => {
+        result.updateStatus.hasUpdate = result.updateStatus.hasUpdate === 1;
         this.appInfo = result
-        console.log(result)
+        console.log(this.appInfo)
       })
+      this.$router.push('/')
     },
     methods:{
 
@@ -43,13 +47,19 @@
 
 <style lang="less">
 @import "../node_modules/uikit/src/less/uikit.less";
-@import "./assets/less/theme.less";
-@import "./assets/less/customizations.less";
+@import "@/assets/less/theme.less";
+@import "@/assets/less/customizations.less";
 </style>
 
 <style lang="less">
+html, body, div#app{
+  background: #221d27;
+}
 *{
   user-select: none;
+}
+a:not(.external-link), button:not(.external-link){
+  cursor: default !important;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -69,51 +79,11 @@
   background-color: #221d27;
 }
 
-.uk-button {
-  border-radius: 3px;
-}
-
-.nx-button-small{
-  padding: 2px 30px;
-  line-height: 1.6em;
-}
-.nx-button-default{
-  background-color: #5a565f;
-  color: #e6e6e7;
-  border: 1px solid transparent;
-  border-top-color: #6c6770;
-  box-shadow: 0 5px 3px rgba(0,0,0, 0);
-  text-transform: none;
-
-  &:hover{
-    color: #f3f3f3;
-    background-color: #605c65;
-    border-top-color: #78727c;
-  }
-}
-.uk-button.nx-button-danger {
-  background-color: #2d0000;
-  color: white;
-  border: 1px solid #380000;
-}
-.uk-button.nx-button-success {
-  background-color: green;
-  color: white;
-  border: 1px solid green;
-}
-
-.uk-button-group .uk-button:last-of-type{
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.uk-button-group .uk-button:not(:last-of-type){
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.nx-button-default.nx-selected{
-  background-color: #333136;
-  border-color: rgba(0,0,0, .3);
-  box-shadow: inset 0 0 4px rgba(0,0,0, .3);
+.nx-footer-container{
+  background-color: #252328;
+  border-top:1px solid #1a191c;
+  padding:5px 25px;
+  overflow-x: scroll;
 }
 
 .medium-icon{
@@ -131,12 +101,37 @@
   border-bottom:2px solid #1a191c;
 }
 
+.nx-text-small{
+  font-size: .8em;
+}
+
 .nx-text-xsmall{
   font-size: .6em;
 }
 
-.drag{
-  -webkit-app-region: drag;
+.nx-container{
+  padding: 20px;
+  border: 1px solid #ffffff24;
+  border-radius: 4px;
+  background: #39343c;
+}
+.uk-modal{
+  backdrop-filter: blur(10px);
+}
+.uk-modal-title{
+  font-size:22px;
+}
+.nx-width-xsmall{
+  min-width: 70px;
+  width: 70px;
+}
+.uk-tooltip {
+  max-width:800px;
+}
+
+.nx-disabled{
+  opacity: 0.5 !important;
+  filter: blur(1px);
 }
 
 </style>

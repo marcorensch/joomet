@@ -1,31 +1,39 @@
 import { createApp }  from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store'
+import { createPinia } from 'pinia'
+import Notifications from '@kyvg/vue3-notification'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
-    faUserSecret,
-    faBuilding,
     faBarsProgress,
     faGrip,
     faRotate,
     faPlusCircle,
     faFolder,
-    faFolderTree,
-    faFolderPlus,
     faChevronLeft,
     faChevronRight,
     faChevronUp,
     faChevronDown,
-    faFileCircleCheck, faBars
+    faFileCircleCheck,
+    faBars,
+    faTrashCan,
+    faCircleXmark,
+    faLanguage,
+    faFile,
+    faTriangleExclamation,
+    faChartLine,
+    faSave,
+    faWifi, faExternalLinkAlt, faCoffee, faCircleCheck, faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
+import {faPaypal, faStripe} from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faUserSecret, faBuilding, faBarsProgress, faGrip, faRotate, faPlusCircle, faFolder, faFolderTree, faFolderPlus, faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faFileCircleCheck, faBars)
+library.add( faInfoCircle, faStripe, faCoffee, faPaypal, faExternalLinkAlt, faWifi, faSave, faBarsProgress, faGrip, faRotate, faPlusCircle, faCircleXmark, faFolder, faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faCircleCheck, faFileCircleCheck, faBars, faTrashCan, faLanguage, faFile, faTriangleExclamation, faChartLine)
 
 createApp(App)
     .component('font-awesome-icon', FontAwesomeIcon)
-    .use(store)
+    .use(createPinia())
     .use(router)
+    .use(Notifications)
     .mount('#app')

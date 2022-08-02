@@ -1,0 +1,130 @@
+.uk-button{
+  border-radius:3px;
+  text-transform: none;
+}
+.uk-button.uk-button-default {
+  background-color: #f5f5f5;
+  border-color: #e5e5e5;
+  color: #666;
+}
+.uk-button.uk-button-primary{
+  background-color: #2e2d30;
+  border-color: #151515;
+  color: #dedede;
+}
+.uk-button.uk-button-primary:hover{
+  background-color: #1b1a1c;
+  border-color: #151515;
+}
+.uk-button.uk-button-secondary {
+  background-color: #f5f5f5;
+  border-color: #e5e5e5;
+  color: #666;
+}
+
+.uk-button.uk-button-danger {
+  background-color: #800000;
+  color: white;
+  border: 1px solid #700101;
+  border-top-color: #930202;
+}
+.uk-button.uk-button-warning {
+  background-color: #bd770f;
+  color: white;
+  border: 1px solid #ab6b0c;
+  border-top-color: #d58611;
+}
+.uk-button.uk-button-success {
+  background-color: green;
+  color: white;
+  border: 1px solid green;
+  border-top-color: #009d00;
+}
+
+.uk-button.uk-button-success:hover {
+  background-color: #008a00;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #018f01;
+}
+
+.nx-button-default.nx-selected{
+  background-color: #333136;
+  border-color: rgba(0,0,0, .3);
+  box-shadow: inset 0 0 4px rgba(0,0,0, .3);
+}
+
+.nx-button-default{
+  background-color: #5a565f;
+  color: #e6e6e7;
+  border: 1px solid transparent;
+  border-top-color: #6c6770;
+  box-shadow: 0 5px 3px rgba(0,0,0, 0);
+  text-transform: none;
+
+  &:hover{
+    color: #f3f3f3;
+    background-color: #605c65;
+    border-top-color: #78727c;
+  }
+}
+
+.nx-button-paypal{
+
+  border: 1px solid #d0950e;
+  border-top-color: #fac855;
+  background: #ffc43a;
+  color: #121661 !important;
+}
+
+.nx-button-paypal:hover{
+  cursor: pointer !important;
+  border: 1px solid #d0950e;
+  background: #fabc29;
+  color: #121661 !important;
+}
+
+.nx-button-stripe{
+  cursor: pointer !important;
+  background: #625afa;
+  border: 1px solid #5951f3;
+  border-top-color: #6760fa;
+  color: #fff;
+}
+.nx-button-stripe:hover{
+  cursor: pointer !important;
+  background: #5c54f6;
+}
+
+.nx-button-small{
+  padding: 2px 30px;
+  line-height: 1.6em;
+}
+
+.uk-button-group > .uk-button:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.uk-button-group > .uk-button:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.uk-button-group > .uk-button:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+.uk-button-group > .uk-button:nth-child(n+2), .uk-button-group > div:nth-child(n+2) .uk-button
+{
+  margin-left:0;
+}
+.uk-button-group > .nx-button-default {
+  border-left: 1px solid rgba(255,255,255, .05);
+  border-right: 1px solid rgba(23, 23, 23, .05);
+}
+.nx-button-select{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 1px solid #19191c;
+}
+.uk-disabled{
+  opacity: .5;
+  filter: blur(.5px);
+}

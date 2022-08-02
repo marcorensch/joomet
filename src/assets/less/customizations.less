@@ -10,3 +10,65 @@ h1{
 hr{
   margin-top:10px;
 }
+
+.uk-alert.uk-alert-danger{
+  background: rgba(218, 8, 8, 0.11);
+  color: #d7b4b4;
+  border: 1px solid rgba(218, 8, 8, 0.23);
+}
+
+.uk-alert.uk-alert-warning{
+  background: rgba(218, 152, 8, 0.11);
+  color: #d7c9b4;
+  border: 1px solid rgba(218, 134, 8, 0.23);
+}
+
+/* CARDS */
+.uk-card{
+  border-radius: 4px;
+}
+.uk-card .uk-card-header{
+  padding:.5em;
+}
+.uk-card.uk-card-default{
+  color: #fff;
+  background-color: #25202a;
+  border: 1px solid rgba(50, 45, 56, 0.5);
+}
+.uk-card.uk-card-default .uk-card-header{
+  border-bottom: 1px solid rgba(50, 45, 56, 0.5);
+
+  .uk-card-title{
+    color: rgba(142, 137, 147, 0.9);
+    font-size: 1.1em;
+  }
+}
+.uk-card-shadow{
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, .2) !important;
+}
+
+/* Notifications */
+.vue-notification-group{
+  position: fixed;
+  top: 61px !important;
+  right: 0;
+  z-index: 10 !important;
+}
+.vue-notification {
+  margin-right:0 !important;
+  // types (green, amber, red)
+  &.success {
+    background: #027902 !important;
+    border-left-color: #016001 !important;
+  }
+
+  &.warn {
+    background: #bd770f !important;
+    border-left-color: #a26509 !important;
+  }
+
+  &.error {
+    background: #800000 !important;
+    border-left-color: #5d0101 !important;
+  }
+}

@@ -1,13 +1,21 @@
 <template>
-  <div class="uk-padding drag">
+  <div class="uk-padding-small drag headbar uk-flex">
     <h1 class="view-title">{{title}}</h1>
+    <div class="uk-width-expand uk-flex uk-flex-right">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "ViewTitle",
-  props:['title'],
+  props:{
+    title:{
+      type: String,
+      required: true
+    }
+  },
 }
 </script>
 
@@ -15,10 +23,13 @@ export default {
 h1.view-title{
   text-align:left;
   color: #ddddde;
-  border-bottom: 1px solid #35303a;
-  margin-bottom: 60px;
   padding-left: 30px;
-  padding-bottom: 10px;
-  line-height: .8em;
+  line-height: 1em;
+  margin-bottom: 0;
+  font-size: 2em;
+}
+.headbar{
+  background: #252328;
+  border-bottom: 1px solid #1a191d;
 }
 </style>

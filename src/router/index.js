@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Dashboard from "@/views/Dashboard";
+import Dashboard from "@/views/DashboardView";
 
 const routes = [
   {
@@ -8,34 +8,25 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/projects',
-    name: 'Projects.Overview',
-    component: () => import('@/views/projects/ProjectsOverview.vue'),
-    children:[
-    ]
+    path: '/checker',
+    name: 'File Analyser',
+    component: () => import('@/views/FileAnalyserView.vue'),
   },
   {
-    path: '/projects/:id',
-    name: 'Projects.Detail',
-    component: () => import('@/views/projects/ProjectDetail.vue'),
-    props: true
-  },
-
-  {
-    path: '/projects/new',
-    name: 'Projects.New',
-    component: () => import('@/views/projects/ProjectNew.vue'),
+    path: '/translator',
+    name: 'Translator',
+    component: () => import('@/views/TranslatorView.vue'),
   },
 
   {
     path: '/settings',
     name: 'Settings',
-    component: () => import('@/views/Settings.vue')
+    component: () => import('@/views/SettingsView.vue')
   },
   {
-    path:'/fileanalyser',
-    name:'FileAnalyser',
-    component: () => import('@/views/Fileanalyser.vue')
+    path:'/tasks',
+    name:'Tasks.Overview',
+    component: () => import('@/views/tasks/overview.vue')
   }
 ]
 

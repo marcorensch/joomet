@@ -6,51 +6,82 @@
 
         <router-link to="/" custom v-slot="{ href, navigate, isActive, isExactActive }">
           <li id="dashboard-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="grip" /><span>Dashboard</span></a>
+            <a :href="href" @click="navigate"><font-awesome-icon icon="grip" class="menu-icon"  /><span>Dashboard</span></a>
           </li>
         </router-link>
 
-        <router-link to="/projects" custom v-slot="{ href, navigate, isActive, isExactActive }">
-          <li id="projects-link" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/projects') }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="folder-tree" /><span>Projects</span></a>
+        <router-link :to="{name:'File Analyser'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
+          <li id="checker-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive || subIsActive('/checker') }">
+            <a :href="href" @click="navigate"><font-awesome-icon icon="file-circle-check" class="menu-icon"  /><span>FileAnalyser</span></a>
+          </li>
+        </router-link>
+
+        <router-link :to="{name:'Translator'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
+          <li id="translator-link" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/translator') }">
+            <a :href="href" @click="navigate"><font-awesome-icon icon="language" class="menu-icon"  /><span>Translator</span></a>
           </li>
         </router-link>
         <div>
           <hr class="nx-hr uk-margin-top">
         </div>
-
-
-        <router-link :to="{name: 'FileAnalyser'}" custom v-slot="{ href, navigate, isActive, isExactActive }">
-          <li id="file-analyser" :class="{ 'uk-active active': isActive || isExactActive || subIsActive('/fileanalyser') }">
-            <a :href="href" @click="navigate"><font-awesome-icon icon="file-circle-check" /><span>FileAnalyser</span></a>
-          </li>
-        </router-link>
-
+        <li class="nx-text-xsmall">
+          <a href="https://docs.joomla.org/Creating_a_language_definition_file" class="external_link uk-link-muted" target="_blank">
+            <font-awesome-icon icon="info-circle" class="menu-icon"  /><span>JDocs Language File</span>
+          </a>
+        </li>
+        <li class="nx-text-xsmall">
+          <a href="https://docs.joomla.org/Creating_a_language_definition_file" class="external_link uk-link-muted" target="_blank">
+            <font-awesome-icon icon="coffee" class="menu-icon" /><span>Donate me a coffee</span>
+          </a>
+        </li>
       </ul>
     </div>
-    <div class="uk-position-bottom-left">
-      <div class=" uk-padding-small">
-        <router-link :to="{name: 'Settings'}"><span uk-icon="icon: cog; ratio: .8"></span></router-link>
+    <div class="uk-position-bottom">
+      <div>
+        <hr class="nx-hr uk-margin-remove">
+      </div>
+      <div v-if="appInfo.updateStatus.hasUpdate" class="uk-margin-small-top">
+        <a class="external-link nx-update-notification uk-width-1-1" target="_blank" :href="appInfo.updateStatus.url" title="More Information">
+          Update available
+        </a>
+      </div>
+      <div class="uk-padding-small">
+        <div class="uk-grid uk-grid-small uk-child-width-expand uk-flex uk-flex-bottom" uk-grid>
+          <div class="uk-text-left">
+            <router-link :to="{name: 'Settings'}"><span uk-icon="icon: cog; ratio: .8"></span></router-link>
+          </div>
+          <div class="uk-text-center">
+            <OnlineStatusIndicator />
+          </div>
+          <div v-if="appInfo.appVersion" class="uk-text-right">
+            <div class="nx-text-xsmall uk-text-meta">
+              v{{appInfo.appVersion}}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div v-if="appInfo.appVersion" class="uk-position-bottom-right">
-      <div class=" uk-padding-small nx-text-xsmall uk-text-meta">
-        v{{appInfo.appVersion}}
-      </div>
-    </div>
+
   </div>
 </template>
 
 <script>
+import OnlineStatusIndicator from "@/components/OnlineStatusIndicator";
 export default {
   name: "Sidebar",
+  components: {OnlineStatusIndicator},
   props:{
     appInfo:{
       type: Object,
       default: () => ({}),
     },
   },
+  data() {
+    return {
+    }
+  },
   mounted() {
+
   },
   methods: {
     subIsActive(input) {
@@ -58,7 +89,8 @@ export default {
       return paths.some(path => {
         return this.$route.path.indexOf(path) === 0 // current path starts with this path string
       })
-    }
+    },
+
   }
 }
 </script>
@@ -76,7 +108,7 @@ export default {
 #nav {
 a {
   color: #eeeeee;
-  font-size: 1.1em;
+  font-size: 14px;
 
 &:hover{
    color: #f8f8f8;
@@ -88,7 +120,7 @@ a {
 }
 
 #nav li {
-  padding: 4px 0 4px 10px;
+  padding: 2px 0 2px 6px;
   border-radius: 6px;
 }
 
@@ -109,6 +141,23 @@ hr.nx-hr {
   border-bottom: 1px solid #2d2a30 !important;
   width: calc(100% + 40px);
   margin-left:-20px;
+}
+a.nx-update-notification {
+  display: block;
+  font-size: .7em;
+  line-height: 2em;
+  transition: all .2s ease-in-out;
+}
+
+a.nx-update-notification:hover {
+  color: #0097fe;
+  text-decoration: none;
+  transition: all .2s ease-in-out;
+}
+
+.menu-icon{
+  width: 1.2em;
+  text-align: left;
 }
 
 </style>
