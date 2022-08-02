@@ -3,7 +3,7 @@
     <Sidebar :appInfo="appInfo" />
 
     <div class="uk-width-expand uk-position-relative">
-      <div id="content" class=" uk-light uk-position-cover">
+      <div id="content" class=" uk-light uk-position-cover" style="overflow: hidden">
         <notifications />
         <router-view/>
       </div>
@@ -32,12 +32,12 @@
       }
     },
     mounted() {
+      this.$router.push('/')
       window.ipcRenderer.invoke('LOADED','').then((result) => {
         result.updateStatus.hasUpdate = result.updateStatus.hasUpdate === 1;
         this.appInfo = result
         console.log(this.appInfo)
       })
-      this.$router.push('/')
     },
     methods:{
 
@@ -52,6 +52,10 @@
 </style>
 
 <style lang="less">
+
+::-webkit-scrollbar{
+  display: none;
+}
 html, body, div#app{
   background: #221d27;
 }
@@ -72,6 +76,11 @@ a:not(.external-link), button:not(.external-link){
 .drag{
   -webkit-user-select: none;
   -webkit-app-region: drag;
+}
+
+.no-drag{
+  -webkit-user-select: auto;
+  -webkit-app-region: no-drag;
 }
 
 #content{

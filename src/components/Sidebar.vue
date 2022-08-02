@@ -2,7 +2,7 @@
   <div id="sidebar" class="drag uk-width-auto uk-light uk-padding uk-position-relative">
     <!-- https://www.webmound.com/custom-active-class-to-router-link-in-vue-3/ -->
     <div class="uk-padding-small">
-      <ul id="nav" class="uk-nav-default uk-nav-parent-icon" uk-nav>
+      <ul id="nav" class="no-drag uk-nav-default uk-nav-parent-icon" uk-nav>
 
         <router-link to="/" custom v-slot="{ href, navigate, isActive, isExactActive }">
           <li id="dashboard-link" :class="{ 'uk-active active': isActive, 'uk-active active': isExactActive }">
@@ -22,7 +22,7 @@
           </li>
         </router-link>
         <div>
-          <hr class="nx-hr uk-margin-top">
+          <hr class="nx-hr uk-margin-top drag">
         </div>
         <li class="nx-text-xsmall">
           <a href="https://docs.joomla.org/Creating_a_language_definition_file" class="external_link uk-link-muted" target="_blank">
@@ -36,7 +36,7 @@
         </li>
       </ul>
     </div>
-    <div class="uk-position-bottom">
+    <div class="uk-position-bottom no-drag">
       <div>
         <hr class="nx-hr uk-margin-remove">
       </div>

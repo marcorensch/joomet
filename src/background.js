@@ -3,7 +3,7 @@
 import * as path from "path";
 import fs from "fs";
 
-import {app, protocol, BrowserWindow, ipcMain, shell, dialog, Notification} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain, shell, dialog, Notification, Menu} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import fetch from 'electron-fetch'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
@@ -34,6 +34,7 @@ const db = new DBLayer(app.getPath("userData"));
 db.createTables()   // Creates the necessary tables if not already exists
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const isMac = process.platform === 'darwin'
 
 
 const allowedFileTypesForCheck = ['.ini', '.txt']
@@ -44,17 +45,26 @@ protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true,
 let mainWindow;
 
 async function createWindow() {
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
         titleBarStyle: 'hidden',
+        titleBarOverlay: isMac ? true : {
+            color: '#252328',
+            symbolColor: '#ddddde'
+        },
         icon: path.resolve(__static, 'icon.png'),
-        width: 1600, height: 600, minWidth: 800, minHeight: 500, webPreferences: {
+        width: 1600,
+        height: 600,
+        minWidth: 800,
+        minHeight: 500,
+        webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
             nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
             contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-            enableRemoteModule: true,
-            preload: path.resolve(__dirname, 'preload.js')
+            preload: path.resolve(__dirname, 'preload.js'),
+            devTools: !app.isPackaged
         }
     })
 
@@ -67,6 +77,25 @@ async function createWindow() {
         // Load the index.html when not in development
         mainWindow.loadURL('app://./index.html')
     }
+
+    const template = [
+        ...(isMac ? [{
+            label: app.name,
+            submenu: [
+                { label: 'About Joomet', role: 'about' },
+                { type: 'separator' },
+                { role: 'services' },
+                { type: 'separator' },
+                { role: 'hide' },
+                { role: 'hideOthers' },
+                { role: 'unhide' },
+                { type: 'separator' },
+                { label: 'Quit Joomet', role: 'quit' }
+            ]
+        }] : [])
+    ]
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
     // opens all "_blank" targets in default browser!
     mainWindow.webContents.setWindowOpenHandler(({url}) => {
