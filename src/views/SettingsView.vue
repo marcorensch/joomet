@@ -73,10 +73,14 @@
                            @valueChanged="handleValueChange"/>
               <div class="uk-margin-top">
                 <div class="uk-form-label">
-                  <label for="useFormality">Use Formal translation <span class="nx-text-xsmall">(if supported)</span></label>
+                  <label for="formality">Use Formal translation <span class="nx-text-xsmall">(if supported)</span></label>
                 </div>
-                <div class="uk-form-controls uk-form-controls-text">
-                  <input type="checkbox" class="uk-checkbox" id="useFormality" name="useFormality" v-model="settings.useFormality" @change="handleValueChange">
+                <div class="uk-form-controls">
+                  <select class="uk-select" id="formality" name="formality" v-model="settings.formality" @change="handleValueChange">
+                    <option value="default">default</option>
+                    <option value="more">more</option>
+                    <option value="less">less</option>
+                  </select>
                 </div>
               </div>
 
@@ -123,7 +127,7 @@ export default {
         key: '',
         sourceLanguage: 'EN',
         targetLanguage: 'DE',
-        useFormality: false,
+        formality: false,
       },
       sourceLanguages: [],
       targetLanguages: [],
@@ -230,6 +234,7 @@ export default {
         key: this.settings.key,
         sourceLanguage: this.settings.sourceLanguage,
         targetLanguage: this.settings.targetLanguage,
+        formality: this.settings.formality,
       }).then(() => {
         if (!this.keyError) {
           if(this.onlineStatus.online) {

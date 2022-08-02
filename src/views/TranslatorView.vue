@@ -32,6 +32,10 @@
                                 :container-classes="'uk-form-controls uk-margin uk-animation-slide-top-small'"
                                 :alert-classes="'uk-alert uk-alert-danger uk-text-center'"
               />
+              <MessageContainer v-if="keyWarning" :message="warningMessage" :clickTarget="'Settings'"
+                                :container-classes="'uk-form-controls uk-margin uk-animation-slide-top-small'"
+                                :alert-classes="'uk-alert uk-alert-warning uk-text-center'"
+              />
               <SelectField :label="'Source Language'"
                            :id="'sourceLanguage'"
                            :required="'true'"
@@ -47,6 +51,18 @@
                            :selected="settings.targetLanguage"
                            :disabled="disabled"
                            @valueChanged="handleValueChange"/>
+              <div  v-if="supportsFormality" class="uk-margin">
+                <div class="uk-form-label">
+                  <label for="formality">Use Formal translation</label>
+                </div>
+                <div class="uk-form-controls">
+                  <select id="formality" name="formality" class="uk-select" v-model="formality" :disabled="disabled" :class="{'uk-disabled':disabled}" @valueChanged="handleValueChange">
+                    <option value="default">default</option>
+                    <option value="more">more</option>
+                    <option value="less">less</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
           <div v-if="store.file" class="uk-position-bottom uk-position-z-index">
@@ -125,13 +141,18 @@ export default {
         key: '',
         sourceLanguage: 'EN',
         targetLanguage: 'DE',
+        formality: 'default',
       },
       sourceLanguage: '',
       targetLanguage: '',
+      formality: 'default',
+      supportsFormality: 0,
       currentString: '',
       sourceLanguages: [],
       targetLanguages: [],
       keyError: false,
+      keyWarning: false,
+      warningMessage:'',
       deeplApiErrorText: '',
       errorMessage: '',
       settingsError: false,
@@ -178,9 +199,11 @@ export default {
           for (let [key, value] of Object.entries(settings)) {
             this.settings[key] = value;
           }
-          // Set selected languages based on settings (prefered)
+          console.log(this.settings)
+          // Set form values based on settings (preferred)
           this.sourceLanguage = this.settings.sourceLanguage;
           this.targetLanguage = this.settings.targetLanguage;
+          this.formality = this.settings.formality;
 
         } else {
           this.settingsError = true;
@@ -188,17 +211,31 @@ export default {
           this.errorMessage = 'Please open Settings to set your API key.';
           this.linkMessageTo = 'Settings';
         }
-      }).then(() => {
+      }).then(async () => {
         if (this.onlineStatus.online) {
           this.checkApiKey();
+          await this.getLanguages();
+          this.checkIfFormalitySupported();
         }
       });
     },
     checkApiKey(){
       window.ipcRenderer.invoke('CHECK_API_KEY').then((status) => {
+        console.log(status)
         if (status.valid) {
-          this.getLanguages();
           this.disabled = false;
+          const percentUsed = Math.round(100 * status.usage.character.count / status.usage.character.limit);
+          if(status.usage.character && 'count' in status.usage.character && 'limit' in status.usage.character){
+            if(percentUsed > 100){
+              this.keyError = true;
+              this.disabled = true;
+              this.errorMessage = `<p>You have used up your monthly DeepL API quota.</p>`;
+              this.linkMessageTo = 'Settings';
+            }else if(percentUsed > 90){
+              this.warningMessage = 'You have almost used up your monthly DeepL quota.';
+              this.keyWarning = true;
+            }
+          }
         } else {
           this.keyError = true;
           this.disabled = true;
@@ -242,35 +279,48 @@ export default {
     },
     handleValueChange(value, target) {
       this[target] = value;
+      this.checkIfFormalitySupported()
+    },
+    checkIfFormalitySupported() {
+      this.supportsFormality = this.targetLanguages.find(lng => lng.value === this.targetLanguage).supportsFormality;
     },
     startTranslation() {
-      console.log('start translation clicked')
       this.translationRunning = true;
       window.ipcRenderer.invoke('TRANSLATE', {
         sourceLanguage: this.sourceLanguage,
         targetLanguage: this.targetLanguage,
         filePath: this.store.file.path,
-        fileName: this.store.file.name
+        fileName: this.store.file.name,
+        formality: this.supportsFormality ? this.formality : 'default'
       }).then((result) => {
-        if(result.status){
-          new Notification("Translation Done", { body: `Translation of ${this.store.file.name} completed` });
+        if(result){
+          if('status' in result && result.status){
+            new Notification("Translation Done", { body: `Translation of ${this.store.file.name} completed` });
+          }else{
+            new Notification(result.notification.title, { body: `${this.store.file.name}\n ${result.notification.message}`});
+          }
         }else{
-          new Notification(result.notification.title, { body: `${this.store.file.name}\n ${result.notification.message}`});
+          // Canceled before start
         }
+
       }).catch((error) => {
         alert(`Application Error\n${error}`);
       }).finally(() => {
-        this.translationRunning = false;
-        this.translationRunning = false;
-        this.percentage = 0;
-        this.currentIndex = 0;
+        this.resetTranslationDisplay();
       });
     },
     cancelTranslation() {
-      this.translationRunning = false;
-      this.currentIndex = 0;
       window.ipcRenderer.send('CANCEL_TRANSLATION');
+      this.resetTranslationDisplay();
     },
+
+    resetTranslationDisplay(){
+      this.translationRunning = false;
+      this.percentage = 0;
+      this.currentIndex = 0;
+      this.currentString = '';
+    },
+
     checkOnlineStatus() {
       this.onlineStatus.online = navigator.onLine;
       if(!this.onlineStatus.online) {

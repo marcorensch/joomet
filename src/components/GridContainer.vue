@@ -84,7 +84,7 @@ export default {
       }
 
       this.translationNumbers.push(
-          new StatisticCard('number', result.translator.length, 'Files translated', '', '', ''),
+          new StatisticCard('number', result.translator.length, 'Sources translated', '', '', ''),
           new StatisticCard('number', rowsTranslated, 'Strings translated', '', '', ''),
           new StatisticCard('number', timeSavedString, 'Time saved', 'Time saved compared to a manual translation', '', ''),
       )
@@ -130,7 +130,10 @@ export default {
       this.translationBarChart = new StatisticCard('bar', barChartData, 'Translator', 'Lines translated by languages', '', 'outterSize')
     },
     buildCheckerCards(result){
-      const problemsPercentage = Math.floor(100 / result.checker.rowsChecked * result.checker.problemsFound) | 0;
+      let problemsPercentage = (() => {
+        let value = Math.round(100 / result.checker.rowsChecked * result.checker.problemsFound) | 0;
+        return value < 100 ? value : 100;
+      })();
       const problemsFoundData = {
         labels: [
           'Correct',
@@ -149,7 +152,7 @@ export default {
           new StatisticCard('number', result.checker.filesChecked, 'Files analysed', 'Different files checked', '', ''),
           new StatisticCard('number', result.checker.checksDone, 'Checks done', 'Checks performed', '', ''),
           new StatisticCard('number', result.checker.rowsChecked, 'Rows analysed', 'Total lines checked', '', ''),
-          new StatisticCard('number', problemsPercentage+"%", 'Problem Rate', 'Strings with Errors Overall', '', ''),
+          new StatisticCard('number', problemsPercentage+"%", 'Problem Rate', 'Strings with Errors Overall (rounded)', '', ''),
       )
       this.checksDoughnut = new StatisticCard('doughnut', problemsFoundData, 'Checks Overview', '', '', 'outterSize')
     }

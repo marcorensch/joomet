@@ -1,6 +1,6 @@
 {
   "name": "joomet",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "main": "background.js",
   "description": "Application to help you check & translate your language files for Joomla! extensions.",

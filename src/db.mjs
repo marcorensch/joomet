@@ -21,7 +21,7 @@ class DBLayer {
     insertTranslationStat(filename, rows, source_language, target_language) {
         const time = Math.floor(Date.now()/1000);
         let countOfRows = rows.reduce((count, row) => {
-            if( typeof row === 'object') count++;
+            if( typeof row === 'object' && row.value_translated.length) count++;
             return count;
         }, 0);
         log.info("Inserting translation stat for " + filename + " with " + countOfRows + " rows");
@@ -101,6 +101,14 @@ class DBLayer {
         }catch (e) {
             log.error("Could not insert into database: " + e );
             throw e;
+        }
+    }
+    getTargetLanguage(code){
+        const languages_query = "SELECT * FROM languages WHERE code = ? AND type='target';"
+        try{
+            return this.db.prepare(languages_query).get(code);
+        }catch (e) {
+            log.error("Could not get from database: " + e );
         }
     }
     getTargetLanguages(){

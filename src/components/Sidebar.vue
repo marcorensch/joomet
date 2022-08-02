@@ -31,13 +31,16 @@
         </li>
         <li class="nx-text-xsmall">
           <a href="https://docs.joomla.org/Creating_a_language_definition_file" class="external_link uk-link-muted" target="_blank">
-            <font-awesome-icon icon="coffee" class="menu-icon" /><span>Buy me a coffee</span>
+            <font-awesome-icon icon="coffee" class="menu-icon" /><span>Donate me a coffee</span>
           </a>
         </li>
       </ul>
     </div>
     <div class="uk-position-bottom">
-      <div v-if="appInfo.updateStatus.hasUpdate" class="uk-animation-slide-bottom">
+      <div>
+        <hr class="nx-hr uk-margin-remove">
+      </div>
+      <div v-if="appInfo.updateStatus.hasUpdate" class="uk-margin-small-top">
         <a class="external-link nx-update-notification uk-width-1-1" target="_blank" :href="appInfo.updateStatus.url" title="More Information">
           Update available
         </a>
@@ -141,17 +144,13 @@ hr.nx-hr {
 }
 a.nx-update-notification {
   display: block;
-  padding-top: .4em;
-  padding-bottom: .2em;
   font-size: .7em;
-  background: rgba(37, 35, 40, 0.98);
-  box-shadow: inset 0 4px 6px -3px rgba(0,0,0,1);
-  border-bottom: 1px solid #2c2a32;
+  line-height: 2em;
   transition: all .2s ease-in-out;
 }
 
 a.nx-update-notification:hover {
-  background: #0097fe;
+  color: #0097fe;
   text-decoration: none;
   transition: all .2s ease-in-out;
 }

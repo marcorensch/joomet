@@ -121,9 +121,36 @@ if (isDevelopment) {
     }
 }
 
+async function updateLanguagesCache(){
+    const settings = store.get('settings');
+    if (settings && settings.key) {
+        try{
+            const translator = new deepl.Translator(settings.key)
+            const sourceLanguages = await translator.getSourceLanguages()
+            sourceLanguages.forEach(language => {
+                language.type = 'source'
+            })
+            const targetLanguages = await translator.getTargetLanguages()
+            targetLanguages.forEach(language => {
+                language.type = 'target'
+                language.supportsFormality = language.supportsFormality ? 1 : 0
+            })
+            if(sourceLanguages && targetLanguages){
+                let languages = sourceLanguages.concat(targetLanguages);
+                if(db.resetLanguages()){
+                    db.insertLanguages(languages)
+                    log.info("Languages Cache updated")
+                }
+            }
+        }catch(error){
+            log.error(error)
+        }
+    }
+}
+
 /* IPC */
 ipcMain.handle("LOADED", async (event) => {
-    let updateStatus = await fetch('https://update.nx-designs.ch/apps/veltj/update.json')
+    let updateStatus = await fetch('https://update.nx-designs.ch/apps/joomet/update.json')
         .then(res => res.json()).then((json) =>{
             log.info("Latest Version: " + json.versions[0].version);
            return {
@@ -158,7 +185,7 @@ ipcMain.handle('INV_READ_FILE',async (event, file)=>{
             fileStats.problems = rowsCheckResults.checkerResults.length
 
             // Write to stats DB
-            //db.insertFileCheckStats(fileStats, file.name)
+            db.insertFileCheckStats(fileStats, file.name)
 
             return {fileStats, rowsCheckResults, fileNameCheck}
 
@@ -200,33 +227,6 @@ ipcMain.handle('UPDATE_LANGUAGES_CACHE',async (e)=>{
     log.info("Manual updating Languages Cache")
     return await updateLanguagesCache()
 })
-
-async function updateLanguagesCache(){
-    const settings = store.get('settings');
-    if (settings && settings.key) {
-        try{
-            const translator = new deepl.Translator(settings.key)
-            const sourceLanguages = await translator.getSourceLanguages()
-            sourceLanguages.forEach(language => {
-                language.type = 'source'
-            })
-            const targetLanguages = await translator.getTargetLanguages()
-            targetLanguages.forEach(language => {
-                language.type = 'target'
-                language.supportsFormality = language.supportsFormality ? 1 : 0
-            })
-            if(sourceLanguages && targetLanguages){
-                let languages = sourceLanguages.concat(targetLanguages);
-                if(db.resetLanguages()){
-                    db.insertLanguages(languages)
-                    log.info("Languages Cache updated")
-                }
-            }
-        }catch(error){
-            log.error(error)
-        }
-    }
-}
 
 ipcMain.handle('SAVE_SETTINGS',async(event,settings)=> {
     store.set('settings', settings);
@@ -270,6 +270,17 @@ ipcMain.on('SAVE_SETTINGS', async (event, args) => {
 ipcMain.handle('TRANSLATE',async (e,args)=>{
     const dt = new deepl.Translator(store.get('settings').key);
     let translatorWrapper = new TranslatorWrapper(dt);
+
+    // check if selected target language supports formality (otherwise translation will fail)
+    let formality = 'default';
+    const validFormalities = ['default','more','less'];
+    if(args.formality !== 'default'){
+    let targetLanguage = await db.getTargetLanguage(args.targetLanguage)
+        if(targetLanguage['supports_formality'] && validFormalities.includes(args.formality)){
+            formality = args.formality
+        }
+    }
+
     try {
         let optionalName = fileHelper.buildNewFileName(args.fileName, args.sourceLanguage, args.targetLanguage)
         // Define the exported File:
@@ -278,9 +289,15 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
                 defaultPath: path.join(app.getPath('desktop'), optionalName),
                 filters: [{name: 'INI File', extensions: ['ini']}]
             });
-        let data = await translatorWrapper.translateFile(args.sourceLanguage, args.targetLanguage, args.filePath, mainWindow)
-        if(data && !filename.canceled){
-            if(data.status) {
+
+        if(!filename.canceled){
+            let data = await translatorWrapper.translateFile(args.sourceLanguage, args.targetLanguage, args.filePath, formality, mainWindow)
+            if(data){
+                if(!data.status) {
+                    let message = data.notification.title ? `${data.notification.title}: ${data.notification.message}` : data.notification.message;
+                    log.error(message)
+                }
+
                 try {
                     fileHelper.writeToFile(filename.filePath, fileHelper.prepareDataForNewFile(data.rows))
                     log.info("File saved " + filename.filePath)
@@ -292,6 +309,7 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
                         message: "File could not be translated\nPlease check source file and try again"
                     }
                 }
+
                 // Write Stats to db
                 try {
                     let name = filename.filePath.split('/').pop();
@@ -299,11 +317,11 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
                 } catch (error) {
                     log.error("Error while saving stats: " + error)
                 }
-            }else{
-                let message = data.notification.title ? `${data.notification.title}: ${data.notification.message}` : data.notification.message;
-                log.error(message)
+
+                return data;
             }
-            return data;
+
+            return false
         }
     }catch (error) {
         log.error("TRANSLATE ERROR: " + error)
@@ -311,9 +329,11 @@ ipcMain.handle('TRANSLATE',async (e,args)=>{
     }
 
 })
+
 ipcMain.handle('RESET_STATS',()=>{
     return db.resetStats();
 })
+
 ipcMain.handle('GET_STATISTICS',(e)=>{
     const data = {
         checker : {},
@@ -343,3 +363,5 @@ ipcMain.on('OPEN_FILE',(e, args)=>{
     console.log(args)
     shell.openExternal('file://'+args)
 })
+
+
