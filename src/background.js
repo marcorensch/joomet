@@ -49,6 +49,7 @@ async function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         titleBarStyle: 'hidden',
+        trafficLightPosition: { x: 10, y: 16 },
         titleBarOverlay: isMac ? true : {
             color: '#252328',
             symbolColor: '#ddddde'
@@ -58,6 +59,7 @@ async function createWindow() {
         height: 600,
         minWidth: 800,
         minHeight: 500,
+        backgroundColor: '#221d27',
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -92,7 +94,17 @@ async function createWindow() {
                 { type: 'separator' },
                 { label: 'Quit Joomet', role: 'quit' }
             ]
-        }] : [])
+        }] : []),
+        // Edit
+        {
+            label: 'Edit',
+            submenu: [
+                { label: 'Cut', accelerator: 'CmdOrCtrl+X', role: 'cut' },
+                { label: 'Copy', accelerator: 'CmdOrCtrl+C', role: 'copy' },
+                { label: 'Paste', accelerator: 'CmdOrCtrl+V', role: 'paste' },
+                { label: 'Select All', accelerator: 'CmdOrCtrl+A', role: 'selectall' }
+            ]
+        },
     ]
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
