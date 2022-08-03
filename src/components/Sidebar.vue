@@ -30,7 +30,7 @@
           </a>
         </li>
         <li class="nx-text-xsmall">
-          <a href="https://docs.joomla.org/Creating_a_language_definition_file" class="external_link uk-link-muted" target="_blank">
+          <a href="https://nx-designs.ch/apps/joomet" class="external_link uk-link-muted" target="_blank">
             <font-awesome-icon icon="coffee" class="menu-icon" /><span>Donate me a coffee</span>
           </a>
         </li>

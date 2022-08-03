@@ -1,8 +1,13 @@
 {
   "name": "joomet",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "main": "background.js",
+  "author": {
+    "name" : "Marco Rensch",
+    "email" : "support@nx-designs.ch",
+    "url" : "https://www.nx-designs.ch"
+  },
   "description": "Application to help you check & translate your language files for Joomla! extensions.",
   "scripts": {
     "serve": "vue-cli-service serve",
