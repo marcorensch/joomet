@@ -24,6 +24,10 @@ Windows:
 ```
 npm run electron:build -- --win nsis
 ```
+Linux Debian:
+```
+npm run electron:build -- --linux deb
+```
 <b>Note:</b> See modifications for building on MacOS: https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/1701#issuecomment-1099369036
 
 ### Customize configuration
