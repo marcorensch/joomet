@@ -1,4 +1,4 @@
-# vue 3.x with UIkit Integration
+# Joomet Desktop Application 
 
 ## Project setup
 ```
