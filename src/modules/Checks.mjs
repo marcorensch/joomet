@@ -59,7 +59,7 @@ class ValueChecker{
         string = string.trim()
         let s = string[string.length-1] === '"' && string[0] === '"'
         let m = s ? '' : 'Value is not correctly encapsulated by "'
-        let h = s ? '' : `Double quotes in value strings must be escaped by backslashs.<br>Good: <code>&lt;div class=&#92;&quot;foo&#92;&quot;&gt;foo&lt;/div&gt;</code><br>Bad:<code>&lt;div class=&quot;foo&quot;&gt;foo&lt;/div&gt;</code>`
+        let h = s ? '' : `Double quotes in value strings must be escaped by backslashes.<br>Good: <code>&lt;div class=&#92;&quot;foo&#92;&quot;&gt;foo&lt;/div&gt;</code><br>Bad:<code>&lt;div class=&quot;foo&quot;&gt;foo&lt;/div&gt;</code>`
         return new CheckResult(s,'value',m,h)
     }
     static lastCharIsNotEscaped(string){
@@ -74,7 +74,7 @@ class ValueChecker{
         string = string.trim()
         let s = !/(?<!\\)"/.test(string.slice(1, -1));
         let m = s ? '':'Unescaped Double Quotes found'
-        let h = s ? '':`Double quotes in value strings must be escaped by backslashs<br>Good: <code>&lt;div class=\\"foo\\"&gt;foo&lt;/div&gt;</code><br>Bad: <code>&lt;div class="foo"&gt;foo&lt;/div&gt;</code>`
+        let h = s ? '':`Double quotes in value strings must be escaped by backslashes<br>Good: <code>&lt;div class=\\"foo\\"&gt;foo&lt;/div&gt;</code><br>Bad: <code>&lt;div class="foo"&gt;foo&lt;/div&gt;</code>`
         return new CheckResult(s,'value',m,h)
     }
 
