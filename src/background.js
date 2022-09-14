@@ -20,8 +20,6 @@ const fileHelper = new FileHelper();
 const log = require('electron-log');
 log.transports.file.resolvePath = () =>{ return path.join(app.getPath('userData'), 'logs/app.log'); };
 
-console.log(app.getPath('userData'))
-
 log.info("Starting App" );
 
 // User Settings
@@ -45,10 +43,9 @@ protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true,
 let mainWindow;
 
 async function createWindow() {
-
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        titleBarStyle: 'hidden',
+        titleBarStyle: isMac ? 'hidden' : 'default',
         trafficLightPosition: { x: 10, y: 16 },
         titleBarOverlay: isMac ? true : {
             color: '#252328',
